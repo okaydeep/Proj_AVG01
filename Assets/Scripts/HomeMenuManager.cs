@@ -12,4 +12,19 @@ public class HomeMenuManager : MonoBehaviour {
 	void Update () {
 	
 	}
+
+	public void Resume()
+	{
+		CanvasManager.instance.ShowCanvas (GlobalDefine.GCanvas.BattleMenu);
+	}
+
+	public void NewTravel()
+	{
+		CanvasManager.instance.ShowCanvas (GlobalDefine.GCanvas.BattleMenu);
+	}
+
+	public void TurnToSetting()
+	{
+		CanvasManager.instance.ShowCanvas (GlobalDefine.GCanvas.Setting);
+	}
 }

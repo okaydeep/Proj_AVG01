@@ -1,15 +1,20 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PlayerDataManager : MonoBehaviour {
+public class PlayerDataManager {
 
-	// Use this for initialization
-	void Start () {
-	
+	private static PlayerDataManager _instance;
+	public static PlayerDataManager instance {
+		get
+		{
+			if (_instance == null)
+				_instance = new PlayerDataManager();
+			return _instance;
+		}
 	}
-	
-	// Update is called once per frame
-	void Update () {
-	
+
+	public void GetData()
+	{
+		
 	}
 }
