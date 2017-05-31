@@ -89,33 +89,12 @@ public class MarketManager : MonoBehaviour
         moneyContent.text = ownMoney.ToString();
 
 
-        /*
-        XmlDocument xml = new XmlDocument();
-        XmlReaderSettings set = new XmlReaderSettings();
-        set.IgnoreComments = true;
-        xml.Load(XmlReader.Create((Application.dataPath + "/Items.xml"), set));
 
-        XmlNodeList xmlNodeList = xml.SelectSingleNode("objects").ChildNodes;
-        Debug.Log(xmlNodeList.Count);
-
-        foreach (XmlElement xl in xmlNodeList)
+        for (int i = 1; i <= itemDic.Count; i++)
         {
 
-            Debug.Log("id:" + xl.GetAttribute("id"));
-            Debug.Log("name:" + xl.GetAttribute("name"));
-            Debug.Log("price:" + xl.GetAttribute("price"));
-            string id = xl.GetAttribute("id");
-            string name = xl.GetAttribute("name");
-            string price = xl.GetAttribute("price");
-            Dictionary<string, string> tempDic = new Dictionary<string, string>();
-            tempDic.Add("name", name);
-            tempDic.Add("price", price);
-            itemDic.Add(id, tempDic);
-            */
-            for(int i=1;i<= itemDic.Count; i++) {
-
             GameObject gobj = GameObject.Instantiate(item);
-            
+
             gobj.name = i.ToString();// id
             gobj.transform.SetParent(parent);
             gobj.transform.localScale = parent.transform.localScale;
@@ -145,13 +124,11 @@ public class MarketManager : MonoBehaviour
 
         for (int i = 1; i <= ownItemDic.Count; i++)
         {
-            // ownItemDic[i]
 
+            int ownCount = ownItemDic[i.ToString()];
 
-            int q = ownItemDic[i.ToString()];
-
-            Debug.Log("i:" + i + "  Count:" + q);
-            if (q == 0)
+            Debug.Log("i:" + i + "  ownCount:" + ownCount);
+            if (ownCount == 0)
                 continue;
             GameObject gobj = GameObject.Instantiate(item);
 
@@ -215,7 +192,7 @@ public class MarketManager : MonoBehaviour
         Dictionary<string, string> tempDic = itemDic[sender.name];
 
         SellDialog.transform.FindChild("title").GetComponent<Text>().text = tempDic["name"];
-       int price= int.Parse(tempDic["price"])/2;
+        int price = int.Parse(tempDic["price"]) / 2;
 
         SellDialog.transform.FindChild("price").GetComponent<Text>().text = price.ToString();
 
@@ -274,23 +251,30 @@ public class MarketManager : MonoBehaviour
         }
 
         Text hold = SellDialog.transform.FindChild("holdNum").GetComponent<Text>();
-        count-= num;
+        count -= num;
         Debug.Log("剩餘數量:" + count);
         hold.text = count.ToString();
         PlayerDataManager.instance.SetItemCount(id, count);
-        //家前
-        addMoney(price*num);
+
+        addMoney(price * num);
     }
 
 
-    public void ClosePurchaseDialog()
-    {
-        PurchaseDialog.SetActive(false);
-    }
 
-    public void CloseSellDialog()
+    public void CloseDialog(GameObject obj)
     {
-        SellDialog.SetActive(false);
+        obj.SetActive(false);
+        Debug.Log(obj.name);
+        if (obj.name == "Scroll View")
+        {
+            Debug.Log("1");
+            for (int i = 0; i < MarketObjs.Length; i++)
+                MarketObjs[i].SetActive(true);
+
+            MoneyInfo.SetActive(false);
+        }
+        else
+            Debug.Log("2");
     }
 
 
@@ -376,7 +360,12 @@ public class MarketManager : MonoBehaviour
 
 
 
-
+    public void Back()
+    {
+        Debug.Log("Back1");
+          CanvasManager.instance.ShowCanvas(GlobalDefine.GCanvas.BattleMenu);
+        Debug.Log("Back2");
+    }
 
 
 }
