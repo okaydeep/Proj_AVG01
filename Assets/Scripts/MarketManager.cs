@@ -8,33 +8,29 @@ public class MarketManager : MonoBehaviour
 {
     public GameObject[] MarketObjs;
     public Transform parent;
-
     public GameObject ShopList;
     public GameObject PurchaseDialog;
     public GameObject SellDialog;
     public GameObject item;
 
-    public GameObject MoneyInfo;
-    Dictionary<string, Dictionary<string, string>> itemDic = new Dictionary<string, Dictionary<string, string>>();
+    private Dictionary<string, Dictionary<string, string>> itemDic = new Dictionary<string, Dictionary<string, string>>();
 
     void OnGUI()
     {
         if (GUI.Button(new Rect(10, 20, 180, 30), "add 1000 Money"))
         {
             addMoney(1000);
-            PlayerDataManager.instance.AllItemCountInit();
+
         };
 
         if (GUI.Button(new Rect(300, 20, 180, 30), "xml"))
         {
             LoadXML();
-
         };
 
         if (GUI.Button(new Rect(500, 20, 180, 30), "init Item"))
         {
             PlayerDataManager.instance.AllItemCountInit();
-
         };
     }
     // Use this for initialization
@@ -62,10 +58,11 @@ public class MarketManager : MonoBehaviour
 
         foreach (XmlElement xl in xmlNodeList)
         {
-
+            /*
             Debug.Log("id:" + xl.GetAttribute("id"));
             Debug.Log("name:" + xl.GetAttribute("name"));
             Debug.Log("price:" + xl.GetAttribute("price"));
+            */
             string id = xl.GetAttribute("id");
             string name = xl.GetAttribute("name");
             string price = xl.GetAttribute("price");
@@ -78,23 +75,20 @@ public class MarketManager : MonoBehaviour
 
     public void Purchase()
     {
-        //  CanvasManager.instance.ShowCanvas(GlobalDefine.GCanvas.BattleMenu);
+
         for (int i = 0; i < MarketObjs.Length; i++)
             MarketObjs[i].SetActive(false);
 
         ShopList.SetActive(true);
-        MoneyInfo.SetActive(true);
+        GeneralUIManager.instance.ShowMoneyInfo(true);
+
         int ownMoney = PlayerPrefs.GetInt("money", 0);
-        Text moneyContent = MoneyInfo.transform.FindChild("moneyContent").GetComponent<Text>();
-        moneyContent.text = ownMoney.ToString();
 
-
+        GeneralUIManager.instance.SetMoneyInfo(ownMoney.ToString());
 
         for (int i = 1; i <= itemDic.Count; i++)
         {
-
             GameObject gobj = GameObject.Instantiate(item);
-
             gobj.name = i.ToString();// id
             gobj.transform.SetParent(parent);
             gobj.transform.localScale = parent.transform.localScale;
@@ -114,17 +108,18 @@ public class MarketManager : MonoBehaviour
             MarketObjs[i].SetActive(false);
 
         ShopList.SetActive(true);
-        MoneyInfo.SetActive(true);
+
+        GeneralUIManager.instance.ShowMoneyInfo(true);
         int ownMoney = PlayerPrefs.GetInt("money", 0);
-        Text moneyContent = MoneyInfo.transform.FindChild("moneyContent").GetComponent<Text>();
-        moneyContent.text = ownMoney.ToString();
+
+        GeneralUIManager.instance.SetMoneyInfo(ownMoney.ToString());
         //
         Dictionary<string, int> ownItemDic = PlayerDataManager.instance.GetAllItemCount();
-
+        Debug.Log("ownItemDic:" + ownItemDic.Count);
 
         for (int i = 1; i <= ownItemDic.Count; i++)
         {
-
+            Debug.Log("KEY:" + i.ToString());
             int ownCount = ownItemDic[i.ToString()];
 
             Debug.Log("i:" + i + "  ownCount:" + ownCount);
@@ -271,7 +266,14 @@ public class MarketManager : MonoBehaviour
             for (int i = 0; i < MarketObjs.Length; i++)
                 MarketObjs[i].SetActive(true);
 
-            MoneyInfo.SetActive(false);
+            GeneralUIManager.instance.ShowMoneyInfo(false);
+            //清除ScrollView裡的item
+            for (int i = 0; i < parent.transform.childCount; i++)
+            {
+                GameObject go = parent.transform.GetChild(i).gameObject;
+                Destroy(go);
+            }
+
         }
         else
             Debug.Log("2");
@@ -286,8 +288,7 @@ public class MarketManager : MonoBehaviour
         PlayerPrefs.SetInt("money", ownMoney);
         PlayerPrefs.Save();
 
-        Text moneyContent = MoneyInfo.transform.FindChild("moneyContent").GetComponent<Text>();
-        moneyContent.text = ownMoney.ToString();
+        GeneralUIManager.instance.SetMoneyInfo(ownMoney.ToString());
     }
 
     private bool reduceMoney(int price)
@@ -306,8 +307,7 @@ public class MarketManager : MonoBehaviour
         PlayerPrefs.SetInt("money", ownMoney);
         PlayerPrefs.Save();
 
-        Text moneyContent = MoneyInfo.transform.FindChild("moneyContent").GetComponent<Text>();
-        moneyContent.text = ownMoney.ToString();
+        GeneralUIManager.instance.SetMoneyInfo(ownMoney.ToString());
         return true;
     }
 
@@ -316,7 +316,6 @@ public class MarketManager : MonoBehaviour
         string path = Application.dataPath + "/Items.xml";
         if (!File.Exists(path))
         {
-
             XmlDocument xml = new XmlDocument();
             XmlElement root = xml.CreateElement("objects");
 
@@ -332,10 +331,7 @@ public class MarketManager : MonoBehaviour
             main2.SetAttribute("price", "300");
             root.AppendChild(main2);
 
-
-
             xml.AppendChild(root);
-
             xml.Save(path);
         }
     }
@@ -359,12 +355,9 @@ public class MarketManager : MonoBehaviour
     }
 
 
-
     public void Back()
     {
-        Debug.Log("Back1");
-          CanvasManager.instance.ShowCanvas(GlobalDefine.GCanvas.BattleMenu);
-        Debug.Log("Back2");
+        CanvasManager.instance.ShowCanvas(GlobalDefine.GCanvas.BattleMenu);
     }
 
 

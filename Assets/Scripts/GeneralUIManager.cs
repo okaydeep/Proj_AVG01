@@ -1,11 +1,25 @@
 ﻿using UnityEngine;
 using System.Collections;
 using GlobalDefine;
-
+using UnityEngine.UI;
 public class GeneralUIManager : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
+    public static GeneralUIManager instance = null;
+    public GameObject MoneyInfo;
+    void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else if (instance != this)
+        {
+            Destroy(gameObject);
+        }    
+    }
+
+    // Use this for initialization
+    void Start () {
 	
 	}
 	
@@ -14,7 +28,17 @@ public class GeneralUIManager : MonoBehaviour {
 	
 	}
 
-	public void Back()
+    public void ShowMoneyInfo(bool bol)
+    {
+        MoneyInfo.SetActive(bol);
+    }
+
+    public void SetMoneyInfo(string str)
+    {
+        MoneyInfo.transform.FindChild("moneyContent").GetComponent<Text>().text=str;
+    }
+
+    public void Back()
 	{
 		int showingIdx = CanvasManager.instance.GetShowingCanvasIdx ();
 
