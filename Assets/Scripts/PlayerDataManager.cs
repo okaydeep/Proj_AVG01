@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using GlobalDefine;
+
 public class PlayerDataManager
 {
-
-    private static PlayerDataManager _instance;
-    Dictionary<string, int> ownItemDic = new Dictionary<string, int>();
+    private static PlayerDataManager _instance;    
     public static PlayerDataManager instance
     {
         get
@@ -16,12 +16,13 @@ public class PlayerDataManager
         }
     }
 
+	public List<Character> teamData;
+	Dictionary<string, int> ownItemDic = new Dictionary<string, int>();
+
     public void GetData()
     {
 
-    }
-
- 
+    } 
 
     public int GetItemCount(string item)
     {
