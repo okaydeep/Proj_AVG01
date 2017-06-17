@@ -1,25 +1,44 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
+using GlobalDefine;
 public class MarketManager : MonoBehaviour
 {
     public GameObject[] MarketObjs;
+    public GameObject[] MarketBtns;
     public Transform parent;
     public GameObject ShopList;
     public GameObject PurchaseDialog;
     public GameObject SellDialog;
     public GameObject item;
 
+    public GameObject ShopStoreObj;
+    public GameObject TavenObj;
+    public GameObject BackObj;
+    public GameObject charcterDialog;
+    public GameObject hireDialog;
     private Dictionary<string, Dictionary<string, string>> itemDic = new Dictionary<string, Dictionary<string, string>>();
+    public static MarketManager instance = null;
+    public enum Market_Page
+    {
+
+        Main = 0,//商店、傭兵選擇頁
+        ShopStore = 1,//商店
+        Taven = 2,//傭兵
+
+    }
+
+    private int currentPage;
 
     void OnGUI()
     {
         if (GUI.Button(new Rect(10, 20, 180, 30), "add 1000 Money"))
         {
             addMoney(1000);
+            //tet();
 
         };
 
@@ -30,23 +49,30 @@ public class MarketManager : MonoBehaviour
 
         if (GUI.Button(new Rect(500, 20, 180, 30), "init Item"))
         {
-            PlayerDataManager.instance.AllItemCountInit();
+            initItemJson();
         };
     }
     // Use this for initialization
     void Start()
     {
-        initItemDic();
+        if (PlayerDataManager.instance.firstEnterGame())
+            initItemJson();
     }
 
-    // Update is called once per frame
-    void Update()
+    void Awake()
     {
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else if (instance != this)
+        {
+            Destroy(gameObject);
+        }
 
     }
-
-
-    private void initItemDic()
+    //初始化PlayerData
+    private void initItemJson()
     {
         XmlDocument xml = new XmlDocument();
         XmlReaderSettings set = new XmlReaderSettings();
@@ -56,75 +82,90 @@ public class MarketManager : MonoBehaviour
         XmlNodeList xmlNodeList = xml.SelectSingleNode("objects").ChildNodes;
         Debug.Log(xmlNodeList.Count);
 
+        string dataPath;
+
+        PlayerData playerData = new PlayerData();
+        playerData.teamData = new List<Character>();
+        List<ItemData> itemDataList = new List<ItemData>();
         foreach (XmlElement xl in xmlNodeList)
         {
-            /*
-            Debug.Log("id:" + xl.GetAttribute("id"));
-            Debug.Log("name:" + xl.GetAttribute("name"));
-            Debug.Log("price:" + xl.GetAttribute("price"));
-            */
-            string id = xl.GetAttribute("id");
-            string name = xl.GetAttribute("name");
-            string price = xl.GetAttribute("price");
-            Dictionary<string, string> tempDic = new Dictionary<string, string>();
-            tempDic.Add("name", name);
-            tempDic.Add("price", price);
-            itemDic.Add(id, tempDic);
+            dataPath = "item" + xl.GetAttribute("id");
+            ItemData item = new ItemData();
+            item.id = Int32.Parse(xl.GetAttribute("id"));
+            item.name = xl.GetAttribute("name");
+            item.price = Int32.Parse(xl.GetAttribute("price"));
+            item.ownCount = 0;
+            itemDataList.Add(item);
+
         }
+        playerData.ownItemData = itemDataList;
+        PlayerDataManager.instance.Save("playerdata", playerData);
     }
 
     public void Purchase()
     {
 
         for (int i = 0; i < MarketObjs.Length; i++)
-            MarketObjs[i].SetActive(false);
-
+            MarketBtns[i].SetActive(false);
+        BackObj.SetActive(false);
         ShopList.SetActive(true);
         GeneralUIManager.instance.ShowMoneyInfo(true);
+        PlayerData playerData = (PlayerData)PlayerDataManager.instance.Load("playerdata", typeof(PlayerData));
+        int ownMoney = 0;
 
-        int ownMoney = PlayerPrefs.GetInt("money", 0);
+        ownMoney = playerData.money;
 
         GeneralUIManager.instance.SetMoneyInfo(ownMoney.ToString());
 
-        for (int i = 1; i <= itemDic.Count; i++)
+        List<ItemData> ownItemDataList = playerData.ownItemData;
+        int itemCount = ownItemDataList.Count;
+        for (int i = 1; i <= itemCount; i++)
         {
+            string dataPath = "item" + i;
+
             GameObject gobj = GameObject.Instantiate(item);
+
             gobj.name = i.ToString();// id
             gobj.transform.SetParent(parent);
             gobj.transform.localScale = parent.transform.localScale;
-            gobj.GetComponentInChildren<Text>().text = itemDic[i.ToString()]["name"];
+            gobj.GetComponentInChildren<Text>().text = ownItemDataList[i - 1].name;
+
+
             Button btn = gobj.GetComponentInChildren<Button>();
             btn.onClick.AddListener(delegate ()
             {
                 this.OnBuyInformation(gobj);
             });
         }
-
     }
 
     public void Sell()
     {
         for (int i = 0; i < MarketObjs.Length; i++)
-            MarketObjs[i].SetActive(false);
-
+            MarketBtns[i].SetActive(false);
+        BackObj.SetActive(false);
         ShopList.SetActive(true);
 
         GeneralUIManager.instance.ShowMoneyInfo(true);
-        int ownMoney = PlayerPrefs.GetInt("money", 0);
+
+        PlayerData playerData = (PlayerData)PlayerDataManager.instance.Load("playerdata", typeof(PlayerData));
+        int ownMoney = 0;
+        ownMoney = playerData.money;
 
         GeneralUIManager.instance.SetMoneyInfo(ownMoney.ToString());
-        //
-        Dictionary<string, int> ownItemDic = PlayerDataManager.instance.GetAllItemCount();
-        Debug.Log("ownItemDic:" + ownItemDic.Count);
 
-        for (int i = 1; i <= ownItemDic.Count; i++)
+
+        List<ItemData> ownItemDataList = playerData.ownItemData;
+        int itemCount = ownItemDataList.Count;
+
+        for (int i = 1; i <= itemCount; i++)
         {
-            Debug.Log("KEY:" + i.ToString());
-            int ownCount = ownItemDic[i.ToString()];
-
+            string dataPath = "item" + i;
+            int ownCount = ownItemDataList[i - 1].ownCount;
             Debug.Log("i:" + i + "  ownCount:" + ownCount);
             if (ownCount == 0)
                 continue;
+
             GameObject gobj = GameObject.Instantiate(item);
 
             gobj.name = i.ToString();// id
@@ -132,34 +173,20 @@ public class MarketManager : MonoBehaviour
             gobj.transform.localScale = parent.transform.localScale;
 
 
-            string name = itemDic[i.ToString()]["name"];
+            string name = ownItemDataList[i - 1].name;
             Debug.Log("name:" + name);
             gobj.GetComponentInChildren<Text>().text = name;
 
-            //  ownItemDic[i].Keys name
+
             Button btn = gobj.GetComponentInChildren<Button>();
             btn.onClick.AddListener(delegate ()
             {
                 this.OnSellInformation(gobj);
             });
+
+
+
         }
-
-
-        /*
-        foreach (KeyValuePair<string, int> item in ownItemDic)
-        {
-            GameObject gobj = GameObject.Instantiate(item);
-          
-            gobj.name = xl.GetAttribute("id");// id
-            gobj.transform.SetParent(parent);
-            gobj.transform.localScale = parent.transform.localScale;
-            gobj.GetComponentInChildren<Text>().text = xl.GetAttribute("name"); ;
-            Button btn = gobj.GetComponentInChildren<Button>();
-            btn.onClick.AddListener(delegate ()
-            {
-                this.OnEmailInformation(gobj);
-            });
-        }*/
 
     }
 
@@ -168,33 +195,31 @@ public class MarketManager : MonoBehaviour
         Debug.Log("Test:" + sender.name);
 
         PurchaseDialog.SetActive(true);
-        Dictionary<string, string> tempDic = itemDic[sender.name];
+        int id = int.Parse(sender.name);
+        string dataPath = "item" + sender.name;
 
-        PurchaseDialog.transform.FindChild("title").GetComponent<Text>().text = tempDic["name"];
-        PurchaseDialog.transform.FindChild("price").GetComponent<Text>().text = tempDic["price"];
-
+        PlayerData playerData = (PlayerData)PlayerDataManager.instance.Load("playerdata", typeof(PlayerData));
+        List<ItemData> ownItemDataList = playerData.ownItemData;
+        PurchaseDialog.transform.FindChild("title").GetComponent<Text>().text = ownItemDataList[id - 1].name;
+        PurchaseDialog.transform.FindChild("price").GetComponent<Text>().text = ownItemDataList[id - 1].price.ToString();
         PurchaseDialog.transform.FindChild("ID").GetChild(0).gameObject.name = sender.name;
-        //Debug.Log("@@:" + tempDic["name"]);
-        int count = PlayerDataManager.instance.GetItemCount(sender.name);
-        PurchaseDialog.transform.FindChild("holdNum").GetComponent<Text>().text = count.ToString();
+        PurchaseDialog.transform.FindChild("holdNum").GetComponent<Text>().text = ownItemDataList[id - 1].ownCount.ToString();
     }
 
     public void OnSellInformation(GameObject sender)
     {
         Debug.Log("Test:" + sender.name);
-
         SellDialog.SetActive(true);
-        Dictionary<string, string> tempDic = itemDic[sender.name];
 
-        SellDialog.transform.FindChild("title").GetComponent<Text>().text = tempDic["name"];
-        int price = int.Parse(tempDic["price"]) / 2;
+        PlayerData playerData = (PlayerData)PlayerDataManager.instance.Load("playerdata", typeof(PlayerData));
+        List<ItemData> ownItemDataList = playerData.ownItemData;
+        int id = int.Parse(sender.name);
+        int price = ownItemDataList[id - 1].price / 2;
 
+        SellDialog.transform.FindChild("title").GetComponent<Text>().text = ownItemDataList[id - 1].name;
         SellDialog.transform.FindChild("price").GetComponent<Text>().text = price.ToString();
-
         SellDialog.transform.FindChild("ID").GetChild(0).gameObject.name = sender.name;
-        //Debug.Log("@@:" + tempDic["name"]);
-        int count = PlayerDataManager.instance.GetItemCount(sender.name);
-        SellDialog.transform.FindChild("holdNum").GetComponent<Text>().text = count.ToString();
+        SellDialog.transform.FindChild("holdNum").GetComponent<Text>().text = ownItemDataList[id - 1].ownCount.ToString();
     }
 
 
@@ -202,25 +227,26 @@ public class MarketManager : MonoBehaviour
     {
         //品項
         string title = PurchaseDialog.transform.FindChild("title").GetComponent<Text>().text;
-        // string title = PurchaseDialog.transform.FindChild("title").GetComponent<Text>().text;
         //價格
         int price = int.Parse(PurchaseDialog.transform.FindChild("price").GetComponent<Text>().text);
-
+        int id = int.Parse(PurchaseDialog.transform.FindChild("ID").GetChild(0).gameObject.name);
         Debug.Log("price:" + price);
+
+        PlayerData playerData = (PlayerData)PlayerDataManager.instance.Load("playerdata", typeof(PlayerData));
+        List<ItemData> ownItemDataList = playerData.ownItemData;
+
         //目前數量+num
-        string id = PurchaseDialog.transform.FindChild("ID").GetChild(0).gameObject.name;
-        int count = PlayerDataManager.instance.GetItemCount(id);
-
-
+        int count = ownItemDataList[id - 1].ownCount;
 
         bool moneyEnough = reduceMoney(price * num);
         if (!moneyEnough)
             return;
         Text hold = PurchaseDialog.transform.FindChild("holdNum").GetComponent<Text>();
         count += num;
+        Debug.Log("after count:" + count);
         hold.text = count.ToString();
-        PlayerDataManager.instance.SetItemCount(id, count);
-
+        ownItemDataList[id - 1].ownCount = count;
+        PlayerDataManager.instance.Save("playerdata", playerData);
     }
 
 
@@ -228,29 +254,31 @@ public class MarketManager : MonoBehaviour
     {
         //品項
         string title = SellDialog.transform.FindChild("title").GetComponent<Text>().text;
-        // string title = PurchaseDialog.transform.FindChild("title").GetComponent<Text>().text;
         //價格
         int price = int.Parse(SellDialog.transform.FindChild("price").GetComponent<Text>().text);
-
         Debug.Log("price:" + price);
         //目前數量+num
-        string id = SellDialog.transform.FindChild("ID").GetChild(0).gameObject.name;
-        int count = PlayerDataManager.instance.GetItemCount(id);
+        int id = int.Parse(SellDialog.transform.FindChild("ID").GetChild(0).gameObject.name);
+        PlayerData playerData = (PlayerData)PlayerDataManager.instance.Load("playerdata", typeof(PlayerData));
+        List<ItemData> ownItemDataList = playerData.ownItemData;
+        int count = ownItemDataList[id - 1].ownCount;
 
-
-        ////
         if (num > count)
         {
             Debug.Log("沒那多物品:" + count);
             return;
+        }
+        else if (num == count)
+        {
+            Destroy(parent.transform.Find(id.ToString()).gameObject);
         }
 
         Text hold = SellDialog.transform.FindChild("holdNum").GetComponent<Text>();
         count -= num;
         Debug.Log("剩餘數量:" + count);
         hold.text = count.ToString();
-        PlayerDataManager.instance.SetItemCount(id, count);
-
+        ownItemDataList[id - 1].ownCount = count;
+        PlayerDataManager.instance.Save("playerdata", playerData);
         addMoney(price * num);
     }
 
@@ -263,8 +291,9 @@ public class MarketManager : MonoBehaviour
         if (obj.name == "Scroll View")
         {
             Debug.Log("1");
-            for (int i = 0; i < MarketObjs.Length; i++)
-                MarketObjs[i].SetActive(true);
+            for (int i = 0; i < MarketBtns.Length; i++)
+                MarketBtns[i].SetActive(true);
+            BackObj.SetActive(true);
 
             GeneralUIManager.instance.ShowMoneyInfo(false);
             //清除ScrollView裡的item
@@ -282,19 +311,34 @@ public class MarketManager : MonoBehaviour
 
     private void addMoney(int price)
     {
-        int ownMoney = PlayerPrefs.GetInt("money", 0);
+        GlobalDefine.PlayerData playerData = (GlobalDefine.PlayerData)PlayerDataManager.instance.Load("playerdata", typeof(GlobalDefine.PlayerData));
+        int ownMoney = 0;
+
+        ownMoney = playerData.money;
+
+
+
         ownMoney += price;
 
-        PlayerPrefs.SetInt("money", ownMoney);
-        PlayerPrefs.Save();
+        playerData.money = ownMoney;
+
 
         GeneralUIManager.instance.SetMoneyInfo(ownMoney.ToString());
+
+
+        PlayerDataManager.instance.Save("playerdata", playerData);
     }
 
     private bool reduceMoney(int price)
     {
         Debug.Log("reduceMoney:" + price);
-        int ownMoney = PlayerPrefs.GetInt("money", 0);
+        GlobalDefine.PlayerData playerData = (GlobalDefine.PlayerData)PlayerDataManager.instance.Load("playerdata", typeof(GlobalDefine.PlayerData));
+        int ownMoney = 0;
+        if (playerData != null)
+        {
+            ownMoney = playerData.money;
+        }
+
 
         if (price > ownMoney)
         {
@@ -304,10 +348,9 @@ public class MarketManager : MonoBehaviour
 
         ownMoney -= price;
 
-        PlayerPrefs.SetInt("money", ownMoney);
-        PlayerPrefs.Save();
 
         GeneralUIManager.instance.SetMoneyInfo(ownMoney.ToString());
+        PlayerDataManager.instance.Save("playerdata", playerData);
         return true;
     }
 
@@ -357,7 +400,93 @@ public class MarketManager : MonoBehaviour
 
     public void Back()
     {
-        CanvasManager.instance.ShowCanvas(GlobalDefine.GCanvas.BattleMenu);
+        // 
+        Debug.Log("Back:" + currentPage);
+        switch (currentPage)
+        {
+            case (int)Market_Page.Main:
+                CanvasManager.instance.ShowCanvas(GlobalDefine.GCanvas.BattleMenu);
+
+                break;
+            case (int)Market_Page.ShopStore:
+                // CanvasManager.instance.ShowCanvas(GlobalDefine.GCanvas.Market);
+                for (int i = 0; i < MarketObjs.Length; i++)
+                    MarketObjs[i].SetActive(true);
+                ShopStoreObj.SetActive(false);
+
+                currentPage = (int)Market_Page.Main;
+                break;
+            case (int)Market_Page.Taven:
+                currentPage = (int)Market_Page.Main;
+                break;
+
+            default:
+
+                break;
+        }
+
+    }
+
+
+    public void ShopStore()
+    {
+        currentPage = (int)Market_Page.ShopStore;
+        for (int i = 0; i < MarketObjs.Length; i++)
+            MarketObjs[i].SetActive(false);
+        ShopStoreObj.SetActive(true);
+    }
+
+    public void Taven()
+    {
+        currentPage = (int)Market_Page.Taven;
+        for (int i = 0; i < MarketObjs.Length; i++)
+            MarketObjs[i].SetActive(false);
+        BackObj.SetActive(false);
+        TavenObj.SetActive(true);
+    }
+
+
+    public void setPage(int page)
+    {
+        currentPage = page;
+    }
+
+    //TAVEN
+
+    public void Hire()
+    {
+
+        UnityEngine.Random.InitState(System.Guid.NewGuid().GetHashCode());
+        int HP = UnityEngine.Random.Range(200, 241);
+        int ATK = UnityEngine.Random.Range(10, 16);
+        int DEF = UnityEngine.Random.Range(10, 16);
+        Debug.Log("HP:" + HP);
+        Debug.Log("ATK:" + ATK);
+        Debug.Log("DEF:" + DEF);
+
+        PlayerData pd = (PlayerData)PlayerDataManager.instance.Load("playerdata", typeof(PlayerData));
+        Debug.Log("DEF:" + DEF);
+        int ownCount = pd.teamData.Count + 1;
+
+        if (ownCount > 4)
+        {
+            Debug.Log("傭兵滿了");
+            return;
+        }
+        string dataPath = "character" + ownCount.ToString();
+        Character character = new Character();
+        pd.teamData.Add(character);
+        PlayerDataManager.instance.Save(dataPath, character);
+        hireDialog.SetActive(false);
+        charcterDialog.SetActive(true);
+    }
+
+    public void Cancel()
+    {
+        for (int i = 0; i < MarketObjs.Length; i++)
+            MarketObjs[i].SetActive(true);
+        BackObj.SetActive(true);
+        TavenObj.SetActive(false);
     }
 
 
