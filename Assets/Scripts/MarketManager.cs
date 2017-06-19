@@ -61,6 +61,8 @@ public class MarketManager : MonoBehaviour
     {
         if (PlayerDataManager.instance.firstEnterGame())
             initItemJson();
+
+
     }
 
     void Awake()
@@ -434,7 +436,7 @@ public class MarketManager : MonoBehaviour
     private bool reduceMoney(int price)
     {
         Debug.Log("reduceMoney:" + price);
-        GlobalDefine.PlayerData playerData = (GlobalDefine.PlayerData)PlayerDataManager.instance.Load("playerdata", typeof(GlobalDefine.PlayerData));
+       PlayerData playerData = (PlayerData)PlayerDataManager.instance.Load("playerdata", typeof(PlayerData));
 
         if (playerData != null)
         {
@@ -452,6 +454,7 @@ public class MarketManager : MonoBehaviour
 
 
         GeneralUIManager.instance.SetMoneyInfo(ownMoney.ToString());
+        playerData.money = ownMoney;
         PlayerDataManager.instance.Save("playerdata", playerData);
         return true;
     }

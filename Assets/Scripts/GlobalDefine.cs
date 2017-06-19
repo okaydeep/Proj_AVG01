@@ -88,7 +88,7 @@ namespace GlobalDefine
         public int finalDod;     // 最終閃避
         [SerializeField]
         public int finalCrt;     // 最終爆擊
-
+        
         public CharBase()
         {
             level = 1;
@@ -119,8 +119,22 @@ namespace GlobalDefine
 
         public Character()
         {
+            UnityEngine.Random.InitState(System.Guid.NewGuid().GetHashCode());
             level = 1;
-            UpdateBaseStatus();
+            baseHP = UnityEngine.Random.Range(200, 241);
+            baseAtk = UnityEngine.Random.Range(10, 16);
+            baseDef = UnityEngine.Random.Range(10, 16);
+            baseHit = level * 5;
+            baseDod = level * 5;
+            baseCrt = 5;
+            item_atk = 0;
+            item_def = 0;
+            item_accessories_1 = 0;
+            item_accessories_2 = 0;
+            currentExp = 0;
+            currentMaxExp = level * 100;
+
+            //UpdateBaseStatus();
         }
 
         public int GetLevel()
@@ -136,6 +150,7 @@ namespace GlobalDefine
         // TODO
         public void UpdateBaseStatus()
         {
+
             baseHP = level * 50;
             baseAtk = level * 20;
             baseDef = level * 10;
