@@ -37,7 +37,8 @@ namespace GlobalDefine
         public List<ItemData> ownItemData; // 物品資料, 第一個參數是物品id, 第二個是數量
                                            // public List<Dictionary<int, int>> itemData;
         [SerializeField]
-        public List<Character> teamData;            // 隊伍資料
+        public int teamData;
+       // public List<Character> teamData;            // 隊伍資料
 
         public void UpdateLastLoginTimestamp()
         {
@@ -58,22 +59,35 @@ namespace GlobalDefine
         public int price;
         public int ownCount;
     }
-
+    [Serializable]
     public class CharBase
     {
-        protected int level;            // 等級
-        protected int baseHP;           // 基本血量
-        protected int baseAtk;          // 基本攻擊
-        protected int baseDef;          // 基本防禦
-        protected int baseHit;      // 基本命中
-        protected int baseDod;      // 基本閃避
-        protected int baseCrt;      // 基本爆擊
-        protected int finalHP;          // 最終血量 (經過技能, 裝備加成)
-        protected int finalAtk;     // 最終攻擊
-        protected int finalDef;     // 最終防禦
-        protected int finalHit;     // 最終命中
-        protected int finalDod;     // 最終閃避
-        protected int finalCrt;     // 最終爆擊
+        [SerializeField]
+        public int level;            // 等級
+        [SerializeField]
+        public int baseHP;           // 基本血量
+        [SerializeField]
+        public int baseAtk;          // 基本攻擊
+        [SerializeField]
+        public int baseDef;          // 基本防禦
+        [SerializeField]
+        public int baseHit;      // 基本命中
+        [SerializeField]
+        public int baseDod;      // 基本閃避
+        [SerializeField]
+        public int baseCrt;      // 基本爆擊
+        [SerializeField]
+        public int finalHP;          // 最終血量 (經過技能, 裝備加成)
+        [SerializeField]
+        public int finalAtk;     // 最終攻擊
+        [SerializeField]
+        public int finalDef;     // 最終防禦
+        [SerializeField]
+        public int finalHit;     // 最終命中
+        [SerializeField]
+        public int finalDod;     // 最終閃避
+        [SerializeField]
+        public int finalCrt;     // 最終爆擊
 
         public CharBase()
         {
@@ -184,6 +198,8 @@ namespace GlobalDefine
         }
 
     }
+
+
     public class Monster : CharBase
     {
         protected int expReward;                        // 擊敗獲得經驗
