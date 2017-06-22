@@ -401,7 +401,7 @@ public class MarketManager : MonoBehaviour
         PlayerDataManager.instance.Save("playerdata", pd);
 
         charcterDialog.SetActive(true);
-        showHireDialog(character.baseHP, character.baseAtk, character.baseDef);
+        showHireDialog(character.baseFixHP, character.baseAtk, character.baseDef);
 
     }
 

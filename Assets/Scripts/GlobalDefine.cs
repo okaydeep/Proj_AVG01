@@ -65,7 +65,9 @@ namespace GlobalDefine
         [SerializeField]
         public int level;            // 等級
         [SerializeField]
-        public int baseHP;           // 基本血量
+        public int baseFixHP;           // 基本血量
+        [SerializeField]
+        public int baseVarHP;           // 基本變動血量
         [SerializeField]
         public int baseAtk;          // 基本攻擊
         [SerializeField]
@@ -92,7 +94,7 @@ namespace GlobalDefine
         public CharBase()
         {
             level = 1;
-            baseHP = level * 50;
+            baseFixHP = level * 50;
             baseAtk = level * 20;
             baseDef = level * 10;
             baseHit = level * 5;
@@ -121,7 +123,8 @@ namespace GlobalDefine
         {
             UnityEngine.Random.InitState(System.Guid.NewGuid().GetHashCode());
             level = 1;
-            baseHP = UnityEngine.Random.Range(200, 241);
+            baseFixHP = UnityEngine.Random.Range(200, 241);
+            baseVarHP = baseFixHP;
             baseAtk = UnityEngine.Random.Range(10, 16);
             baseDef = UnityEngine.Random.Range(10, 16);
             baseHit = level * 5;
@@ -151,7 +154,7 @@ namespace GlobalDefine
         public void UpdateBaseStatus()
         {
 
-            baseHP = level * 50;
+            baseFixHP = level * 50;
             baseAtk = level * 20;
             baseDef = level * 10;
             baseHit = level * 5;
@@ -167,7 +170,7 @@ namespace GlobalDefine
 
         public int GetFinalHP()
         {
-            int ret = baseHP;
+            int ret = baseFixHP;
             return ret;
         }
 
