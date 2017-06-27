@@ -46,7 +46,15 @@ public class TeamInfoManager : MonoBehaviour {
 
 
     public void OnCharacterInformation(GameObject sender) {
+        Debug.Log("sender:" + sender.name);
+        string dataPath = "character" + sender.name;
+        Character character = (Character)PlayerDataManager.instance.Load(dataPath, typeof(Character));
         characterIfo.SetActive(true);
+        characterIfo.transform.FindChild("lvContent").GetComponent<Text>().text = character.level.ToString();
+        characterIfo.transform.FindChild("hpContent").GetComponent<Text>().text = character.baseVarHP.ToString() + "/" + character.baseFixHP.ToString();
+        characterIfo.transform.FindChild("atkContent").GetComponent<Text>().text = character.baseAtk.ToString();
+        characterIfo.transform.FindChild("defContent").GetComponent<Text>().text = character.baseDef.ToString();
+
     }
 
     public void Cancel(GameObject obj)
