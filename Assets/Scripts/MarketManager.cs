@@ -51,16 +51,16 @@ public class MarketManager : MonoBehaviour
             LoadXML();
         };*/
 
-        if (GUI.Button(new Rect(500, 20, 180, 30), "init Item"))
-        {
-            initItemJson();
-        };
+        //if (GUI.Button(new Rect(500, 20, 180, 30), "init Item"))
+        //{
+        //    initItemJson();
+        //};
     }
     // Use this for initialization
     void Start()
     {
-        if (PlayerDataManager.instance.firstEnterGame())
-            initItemJson();
+        //if (PlayerDataManager.instance.firstEnterGame())
+        //    initItemJson();
 
 
     }
@@ -105,7 +105,7 @@ public class MarketManager : MonoBehaviour
 
 
             Button btn = gobj.GetComponentInChildren<Button>();
-            btn.onClick.AddListener(delegate ()
+            btn.onClick.AddListener(delegate()
             {
                 this.OnBuyInformation(gobj);
             });
@@ -133,8 +133,9 @@ public class MarketManager : MonoBehaviour
         for (int i = 1; i <= itemCount; i++)
         {
             int ownCount = ownItemDataList[i - 1].ownCount;
+            int equipmentCount = ownItemDataList[i - 1].equipmentCount;
             Debug.Log("i:" + i + "  ownCount:" + ownCount);
-            if (ownCount == 0)
+            if (ownCount == 0 || ownCount <= equipmentCount)
                 continue;
 
             GameObject gobj = GameObject.Instantiate(item);
@@ -149,7 +150,7 @@ public class MarketManager : MonoBehaviour
 
 
             Button btn = gobj.GetComponentInChildren<Button>();
-            btn.onClick.AddListener(delegate ()
+            btn.onClick.AddListener(delegate()
             {
                 this.OnSellInformation(gobj);
             });
@@ -183,12 +184,15 @@ public class MarketManager : MonoBehaviour
         PlayerData playerData = (PlayerData)PlayerDataManager.instance.Load("playerdata", typeof(PlayerData));
         List<ItemData> ownItemDataList = playerData.ownItemData;
         int id = int.Parse(sender.name);
-        int price = ownItemDataList[id - 1].price / 2;
+        ItemData itemData = ownItemDataList[id - 1];
+        int price = itemData.price / 2;
 
-        SellDialog.transform.FindChild("title").GetComponent<Text>().text = ownItemDataList[id - 1].name;
+        SellDialog.transform.FindChild("title").GetComponent<Text>().text = itemData.name;
         SellDialog.transform.FindChild("price").GetComponent<Text>().text = price.ToString();
         SellDialog.transform.FindChild("ID").GetChild(0).gameObject.name = sender.name;
-        SellDialog.transform.FindChild("holdNum").GetComponent<Text>().text = ownItemDataList[id - 1].ownCount.ToString();
+        //顯示未裝備的數量
+        int remainCount = itemData.ownCount - itemData.equipmentCount;
+        SellDialog.transform.FindChild("holdNum").GetComponent<Text>().text = remainCount.ToString();
     }
 
     public void Buy(int num)
@@ -396,6 +400,15 @@ public class MarketManager : MonoBehaviour
         }
         string dataPath = "character" + ownCount.ToString();
         Character character = new Character();
+
+        UnityEngine.Random.InitState(System.Guid.NewGuid().GetHashCode());
+        character.level = 1;
+        character.baseFixHP = UnityEngine.Random.Range(200, 241);
+        character.baseVarHP = character.baseFixHP;
+        character.baseAtk = UnityEngine.Random.Range(10, 16);
+        character.baseDef = UnityEngine.Random.Range(10, 16);
+
+
         pd.teamData = ownCount;
         PlayerDataManager.instance.Save(dataPath, character);
         PlayerDataManager.instance.Save("playerdata", pd);
@@ -436,7 +449,7 @@ public class MarketManager : MonoBehaviour
     private bool reduceMoney(int price)
     {
         Debug.Log("reduceMoney:" + price);
-       PlayerData playerData = (PlayerData)PlayerDataManager.instance.Load("playerdata", typeof(PlayerData));
+        PlayerData playerData = (PlayerData)PlayerDataManager.instance.Load("playerdata", typeof(PlayerData));
 
         if (playerData != null)
         {
@@ -459,31 +472,31 @@ public class MarketManager : MonoBehaviour
         return true;
     }
     //初始化PlayerData
-    private void initItemJson()
-    {
-        XmlDocument xml = new XmlDocument();
-        XmlReaderSettings set = new XmlReaderSettings();
-        set.IgnoreComments = true;
-        xml.Load(XmlReader.Create((Application.dataPath + "/Items.xml"), set));
+    //private void initItemJson()
+    //{
+    //    XmlDocument xml = new XmlDocument();
+    //    XmlReaderSettings set = new XmlReaderSettings();
+    //    set.IgnoreComments = true;
+    //    xml.Load(XmlReader.Create((Application.dataPath + "/Items.xml"), set));
 
-        XmlNodeList xmlNodeList = xml.SelectSingleNode("objects").ChildNodes;
-        Debug.Log(xmlNodeList.Count);
+    //    XmlNodeList xmlNodeList = xml.SelectSingleNode("objects").ChildNodes;
+    //    Debug.Log(xmlNodeList.Count);
 
-        PlayerData playerData = new PlayerData();
-        playerData.teamData = 0;
-        List<ItemData> itemDataList = new List<ItemData>();
-        foreach (XmlElement xl in xmlNodeList)
-        {
-            ItemData item = new ItemData();
-            item.id = Int32.Parse(xl.GetAttribute("id"));
-            item.name = xl.GetAttribute("name");
-            item.price = Int32.Parse(xl.GetAttribute("price"));
-            item.ownCount = 0;
-            itemDataList.Add(item);
-        }
-        playerData.ownItemData = itemDataList;
-        PlayerDataManager.instance.Save("playerdata", playerData);
-    }
+    //    PlayerData playerData = new PlayerData();
+    //    playerData.teamData = 0;
+    //    List<ItemData> itemDataList = new List<ItemData>();
+    //    foreach (XmlElement xl in xmlNodeList)
+    //    {
+    //        ItemData item = new ItemData();
+    //        item.id = Int32.Parse(xl.GetAttribute("id"));
+    //        item.name = xl.GetAttribute("name");
+    //        item.price = Int32.Parse(xl.GetAttribute("price"));
+    //        item.ownCount = 0;
+    //        itemDataList.Add(item);
+    //    }
+    //    playerData.ownItemData = itemDataList;
+    //    PlayerDataManager.instance.Save("playerdata", playerData);
+    //}
 
     private void showHireDialog(int hp, int atk, int def)
     {

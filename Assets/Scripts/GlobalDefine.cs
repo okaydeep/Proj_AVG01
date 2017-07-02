@@ -58,6 +58,7 @@ namespace GlobalDefine
         public string name;
         public int price;
         public int ownCount;
+        public int equipmentCount;
     }
     [Serializable]
     public class CharBase
@@ -71,25 +72,14 @@ namespace GlobalDefine
         [SerializeField]
         public int baseAtk;          // 基本攻擊
         [SerializeField]
-        public int baseDef;          // 基本防禦
-        [SerializeField]
-        public int baseHit;      // 基本命中
-        [SerializeField]
-        public int baseDod;      // 基本閃避
-        [SerializeField]
-        public int baseCrt;      // 基本爆擊
+        public int baseDef;          // 基本防禦  
         [SerializeField]
         public int finalHP;          // 最終血量 (經過技能, 裝備加成)
         [SerializeField]
         public int finalAtk;     // 最終攻擊
         [SerializeField]
         public int finalDef;     // 最終防禦
-        [SerializeField]
-        public int finalHit;     // 最終命中
-        [SerializeField]
-        public int finalDod;     // 最終閃避
-        [SerializeField]
-        public int finalCrt;     // 最終爆擊
+ 
         
         public CharBase()
         {
@@ -97,9 +87,6 @@ namespace GlobalDefine
             baseFixHP = level * 50;
             baseAtk = level * 20;
             baseDef = level * 10;
-            baseHit = level * 5;
-            baseDod = level * 5;
-            baseCrt = 5;
         }
 
     }
@@ -107,19 +94,19 @@ namespace GlobalDefine
     public class Character : CharBase
     {
         [SerializeField]
-        protected int item_atk;             // 武器id
+        public int item_atk;             // 武器id
         [SerializeField]
-        protected int item_def;             // 防具id
+        public int item_def;             // 防具id
         [SerializeField]
-        protected int item_accessories_1;   // 配件1id
+        public int item_accessories_1;   // 配件1id
         [SerializeField]
-        protected int item_accessories_2;   // 配件2id
+        public int item_accessories_2;   // 配件2id
         [SerializeField]
-        protected int currentExp;           // 目前經驗值
+        public int currentExp;           // 目前經驗值
         [SerializeField]
-        protected int currentMaxExp;        // 目前經驗最大值
+        public int currentMaxExp;        // 目前經驗最大值
 
-        public Character()
+      /*  public Character()
         {
             UnityEngine.Random.InitState(System.Guid.NewGuid().GetHashCode());
             level = 1;
@@ -127,9 +114,6 @@ namespace GlobalDefine
             baseVarHP = baseFixHP;
             baseAtk = UnityEngine.Random.Range(10, 16);
             baseDef = UnityEngine.Random.Range(10, 16);
-            baseHit = level * 5;
-            baseDod = level * 5;
-            baseCrt = 5;
             item_atk = 0;
             item_def = 0;
             item_accessories_1 = 0;
@@ -138,7 +122,7 @@ namespace GlobalDefine
             currentMaxExp = level * 100;
 
             //UpdateBaseStatus();
-        }
+        }*/
 
         public int GetLevel()
         {
@@ -157,9 +141,7 @@ namespace GlobalDefine
             baseFixHP = level * 50;
             baseAtk = level * 20;
             baseDef = level * 10;
-            baseHit = level * 5;
-            baseDod = level * 5;
-            baseCrt = 5;
+       
             item_atk = 0;
             item_def = 0;
             item_accessories_1 = 0;
@@ -185,7 +167,7 @@ namespace GlobalDefine
             int ret = baseDef;
             return ret;
         }
-
+        /*
         public int GetFinalHit()
         {
             int ret = baseHit;
@@ -203,7 +185,7 @@ namespace GlobalDefine
             int ret = baseCrt;
             return ret;
         }
-
+        */
         public int GetCurrentExp()
         {
             return currentExp;
