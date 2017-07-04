@@ -415,7 +415,9 @@ public class MarketManager : MonoBehaviour
 
         charcterDialog.SetActive(true);
         showHireDialog(character.baseFixHP, character.baseAtk, character.baseDef);
-
+        Debug.Log("===InitTeamData===");
+        TeamInfoManager.instance.InitTeamData();
+        Debug.Log("===InitTeamData===");
     }
 
     public void Cancel()
@@ -430,19 +432,10 @@ public class MarketManager : MonoBehaviour
     private void addMoney(int price)
     {
         GlobalDefine.PlayerData playerData = (GlobalDefine.PlayerData)PlayerDataManager.instance.Load("playerdata", typeof(GlobalDefine.PlayerData));
-
         ownMoney = playerData.money;
-
-
-
         ownMoney += price;
-
         playerData.money = ownMoney;
-
-
         GeneralUIManager.instance.SetMoneyInfo(ownMoney.ToString());
-
-
         PlayerDataManager.instance.Save("playerdata", playerData);
     }
 
