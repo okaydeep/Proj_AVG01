@@ -1,18 +1,18 @@
 <objects>
-  <items id="1" name="初級藥水" price="100" />
-  <items id="2" name="中級藥水" price="300" />
-  <items id="3" name="終極藥水" price="1000" />
-  <items id="4" name="木劍" price="500" />
-  <items id="5" name="木盾" price="450" />
-  <items id="6" name="青銅劍" price="1500" />
-  <items id="7" name="銅盾" price="1000" />
-  <items id="8" name="鐵劍" price="2500" />
-  <items id="9" name="鐵盾" price="2000" />
-  <items id="10" name="鋼劍" price="3500" />
-  <items id="11" name="鋼盾" price="3000" />
-  <items id="12" name="秘銀劍" price="5500" />
-  <items id="13" name="秘銀盾" price="5000" />
-  <items id="14" name="精準的護符" price="8000" />
-  <items id="15" name="輕盈的護符" price="12000" />
-  <items id="16" name="洞察的護符" price="20000" />
+  <items id="1" name="初級藥水" price="100" attr="50"/>
+  <items id="2" name="中級藥水" price="300" attr="100"/>
+  <items id="3" name="終極藥水" price="1000" attr="150"/>
+  <items id="4" name="木劍" price="500" attr="10"/>
+  <items id="5" name="木盾" price="450" attr="10"/>
+  <items id="6" name="青銅劍" price="1500" attr="20"/>
+  <items id="7" name="銅盾" price="1000" attr="20"/>
+  <items id="8" name="鐵劍" price="2500" attr="50"/>
+  <items id="9" name="鐵盾" price="2000" attr="50"/>
+  <items id="10" name="鋼劍" price="3500" attr="100"/>
+  <items id="11" name="鋼盾" price="3000" attr="100"/>
+  <items id="12" name="秘銀劍" price="5500" attr="150"/>
+  <items id="13" name="秘銀盾" price="5000" attr="150"/>
+  <items id="14" name="精準的護符" price="8000" attr="80"/>
+  <items id="15" name="輕盈的護符" price="12000" attr="160"/>
+  <items id="16" name="洞察的護符" price="20000" attr="220"/>
 </objects>
