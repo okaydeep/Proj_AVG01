@@ -48,7 +48,7 @@ public class TeamInfoManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
-    
+
 
     public void InitTeamData()
     {
@@ -77,19 +77,27 @@ public class TeamInfoManager : MonoBehaviour
                 this.OnCharacterInformation(gobj);
             });
             Transform child = btn.transform;
-            child.FindChild("lvContent").GetComponent<Text>().text = character.level.ToString();
-            child.FindChild("hpContent").GetComponent<Text>().text = character.baseVarHP.ToString() + "/" + character.baseFixHP.ToString();
-            child.FindChild("atkContent").GetComponent<Text>().text = character.baseAtk.ToString();
-            child.FindChild("defContent").GetComponent<Text>().text = character.baseDef.ToString();
+            updateTeamInfo(child);
+            //child.FindChild("lvContent").GetComponent<Text>().text = character.level.ToString();
+            //child.FindChild("hpContent").GetComponent<Text>().text = character.baseVarHP.ToString() + "/" + character.baseFixHP.ToString();
+            //child.FindChild("atkContent").GetComponent<Text>().text = (character.baseAtk + character.equipAtk).ToString();
+            //child.FindChild("defContent").GetComponent<Text>().text = (character.baseDef + character.equipDef).ToString();
 
         }
 
     }
 
-    //去傭兵所雇用傭兵時刷新
-    public void UpdateTeamData()
-    {
 
+    private void updateTeamInfo(Transform child)
+    {
+        child.FindChild("lvContent").GetComponent<Text>().text = character.level.ToString();
+        child.FindChild("hpContent").GetComponent<Text>().text = character.baseVarHP.ToString() + "/" + character.baseFixHP.ToString();
+        child.FindChild("atkContent").GetComponent<Text>().text = (character.baseAtk + character.equipAtk).ToString();
+        child.FindChild("defContent").GetComponent<Text>().text = (character.baseDef + character.equipDef).ToString();
+        characterIfo.transform.FindChild("lvContent").GetComponent<Text>().text = character.level.ToString();
+        characterIfo.transform.FindChild("hpContent").GetComponent<Text>().text = character.baseVarHP.ToString() + "/" + character.baseFixHP.ToString();
+        characterIfo.transform.FindChild("atkContent").GetComponent<Text>().text = (character.baseAtk + character.equipAtk).ToString();
+        characterIfo.transform.FindChild("defContent").GetComponent<Text>().text = (character.baseDef + character.equipDef).ToString();
     }
 
 
@@ -106,8 +114,8 @@ public class TeamInfoManager : MonoBehaviour
         characterIfo.SetActive(true);
         characterIfo.transform.FindChild("lvContent").GetComponent<Text>().text = character.level.ToString();
         characterIfo.transform.FindChild("hpContent").GetComponent<Text>().text = character.baseVarHP.ToString() + "/" + character.baseFixHP.ToString();
-        characterIfo.transform.FindChild("atkContent").GetComponent<Text>().text = character.baseAtk.ToString();
-        characterIfo.transform.FindChild("defContent").GetComponent<Text>().text = character.baseDef.ToString();
+        characterIfo.transform.FindChild("atkContent").GetComponent<Text>().text = (character.baseAtk + character.equipAtk).ToString();
+        characterIfo.transform.FindChild("defContent").GetComponent<Text>().text = (character.baseDef + character.equipDef).ToString();
 
         List<ItemData> ownItemDataList = playerData.ownItemData;
         ItemData itemData;
@@ -308,13 +316,6 @@ public class TeamInfoManager : MonoBehaviour
         if (ownCount > equipmentCount)//character.item_atk != id
         {
 
-            //此角色該欄位設定物品ID
-
-
-
-
-            //遊戲紀錄該物品 舊裝備數量減1
-
             Debug.Log("currentEquipmentType:" + currentEquipmentType);
 
 
@@ -330,13 +331,15 @@ public class TeamInfoManager : MonoBehaviour
                         Debug.Log("oldItemData:" + oldItemData.name);
                         oldItemData.equipmentCount -= 1;
                         ownItemDataList[character.item_atk - 1] = oldItemData;
+                        //減掉原本裝備能力值
+                        character.equipAtk=0;
 
                     }
 
                     equiptmentItems[0].name = currentItemData.name;
                     equiptmentItems[0].transform.GetComponent<Text>().text = currentItemData.name;
                     character.item_atk = id;
-
+                    character.equipAtk = currentItemData.attr;
                     break;
                 case (int)EquipmentType.DEF:
                     if (character.item_def == id)
@@ -347,11 +350,13 @@ public class TeamInfoManager : MonoBehaviour
                         Debug.Log("oldItemData:" + oldItemData.name);
                         oldItemData.equipmentCount -= 1;
                         ownItemDataList[character.item_def - 1] = oldItemData;
+                        //減掉原本裝備能力值
+                        character.equipDef = 0;
                     }
                     equiptmentItems[1].name = currentItemData.name;
                     equiptmentItems[1].transform.GetComponent<Text>().text = currentItemData.name;
                     character.item_def = id;
-
+                    character.equipDef = currentItemData.attr;
                     break;
                 case (int)EquipmentType.ACCESSORY1:
                     if (character.item_accessories_1 == id)
@@ -362,10 +367,13 @@ public class TeamInfoManager : MonoBehaviour
                         Debug.Log("oldItemData:" + oldItemData.name);
                         oldItemData.equipmentCount -= 1;
                         ownItemDataList[character.item_accessories_1 - 1] = oldItemData;
+                        //減掉原本裝備能力值
+                        character.equipHP = 0;
                     }
                     equiptmentItems[2].name = currentItemData.name;
                     equiptmentItems[2].transform.GetComponent<Text>().text = currentItemData.name;
                     character.item_accessories_1 = id;
+                    character.equipHP = currentItemData.attr;
                     break;
                 case (int)EquipmentType.ACCESSORY2:
                     if (character.item_accessories_2 == id)
@@ -376,30 +384,35 @@ public class TeamInfoManager : MonoBehaviour
                         Debug.Log("oldItemData:" + oldItemData.name);
                         oldItemData.equipmentCount -= 1;
                         ownItemDataList[character.item_accessories_2 - 1] = oldItemData;
+                        character.equipHP = 0;
                     }
                     equiptmentItems[3].name = currentItemData.name;
                     equiptmentItems[3].transform.GetComponent<Text>().text = currentItemData.name;
                     character.item_accessories_2 = id;
+                    character.equipHP = currentItemData.attr;
                     break;
 
             }
             //遊戲紀錄該物品 已裝備數量加1
             currentItemData.equipmentCount += 1;
             ownItemDataList[id - 1] = currentItemData;
-            //刷新UI
+          
 
 
             // Debug.Log("Count:" + ownItemDataList.Count);
             Debug.Log("item_atk:" + character.item_atk);
             playerData.ownItemData = ownItemDataList;
-
             PlayerDataManager.instance.Save("playerdata", playerData);
             PlayerDataManager.instance.Save(dataPath, character);
         }
-
-
-
+        Debug.Log("currentCharacter:" + currentCharacter.ToString());
+      
+        Transform curCharacter = teamParent.GetChild(currentCharacter-1).GetComponentInChildren<Button>().transform;
+       
+        //刷新UI
+        updateTeamInfo(curCharacter);
         equipmentDialog.SetActive(false);
+        Cancel(equipmentList);
     }
 
 

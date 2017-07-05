@@ -59,6 +59,7 @@ namespace GlobalDefine
         public int price;
         public int ownCount;
         public int equipmentCount;
+        public int attr;
     }
     [Serializable]
     public class CharBase
@@ -74,20 +75,20 @@ namespace GlobalDefine
         [SerializeField]
         public int baseDef;          // 基本防禦  
         [SerializeField]
-        public int finalHP;          // 最終血量 (經過技能, 裝備加成)
+        public int equipHP;          // 裝備血量 (經過技能, 裝備加成)
         [SerializeField]
-        public int finalAtk;     // 最終攻擊
+        public int equipAtk;     // 裝備攻擊
         [SerializeField]
-        public int finalDef;     // 最終防禦
+        public int equipDef;     // 裝備防禦
  
-        
+        /*
         public CharBase()
         {
             level = 1;
             baseFixHP = level * 50;
             baseAtk = level * 20;
             baseDef = level * 10;
-        }
+        }*/
 
     }
     [Serializable]

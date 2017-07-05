@@ -62,6 +62,7 @@ public class GameManager : MonoBehaviour {
             item.name = xl.GetAttribute("name");
             item.price = Int32.Parse(xl.GetAttribute("price"));
             item.ownCount = 0;
+            item.attr= Int32.Parse(xl.GetAttribute("attr"));
             itemDataList.Add(item);
         }
         playerData.ownItemData = itemDataList;
