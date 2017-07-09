@@ -101,7 +101,41 @@ public class MarketManager : MonoBehaviour
             gobj.name = i.ToString();// id
             gobj.transform.SetParent(parent);
             gobj.transform.localScale = parent.transform.localScale;
-            gobj.GetComponentInChildren<Text>().text = ownItemDataList[i - 1].name;
+            
+          //  gobj.GetComponentInChildren<Text>().text = ownItemDataList[i - 1].name;
+            gobj.GetComponentInChildren<Button>().transform.FindChild("title").GetComponent<Text>().text = ownItemDataList[i - 1].name;
+          //依ID顯示加成文字
+            string t="";
+            switch (i)
+            {
+                case 1://補HP
+                case 2:
+                case 3:
+                    t = "回復HP";
+                    break;
+                case 4://武
+                case 6:
+                case 8:
+                case 10:
+                case 12:
+                    t = "ATK+";
+                    break;
+                case 5://防
+                case 7:
+                case 9:
+                case 11:
+                case 13:
+                    t = "DEF+";
+                    break;
+                case 14://HP
+                case 15:
+                case 16:
+                    t = "HP+";
+                    break;
+            }
+
+            
+            gobj.GetComponentInChildren<Button>().transform.FindChild("content").GetComponent<Text>().text =t+ ownItemDataList[i - 1].attr.ToString();
 
 
             Button btn = gobj.GetComponentInChildren<Button>();
