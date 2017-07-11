@@ -24,6 +24,8 @@ public class GameManager : MonoBehaviour {
 	void Start () {
         if (PlayerDataManager.instance.firstEnterGame())
             initItemJson();
+        GlobalDefine.PlayerData playerData = (GlobalDefine.PlayerData)PlayerDataManager.instance.Load("playerdata", typeof(GlobalDefine.PlayerData));
+        GeneralUIManager.instance.SetMoneyInfo(playerData.money.ToString());
 	}
 	
 	// Update is called once per frame

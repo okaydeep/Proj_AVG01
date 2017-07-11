@@ -91,11 +91,11 @@ public class TeamInfoManager : MonoBehaviour
     private void updateTeamInfo(Transform child)
     {
         child.FindChild("lvContent").GetComponent<Text>().text = character.level.ToString();
-        child.FindChild("hpContent").GetComponent<Text>().text = character.baseVarHP.ToString() + "/" + character.baseFixHP.ToString();
+        child.FindChild("hpContent").GetComponent<Text>().text = character.baseVarHP.ToString() + "/" + (character.baseFixHP + character.equipHP).ToString();
         child.FindChild("atkContent").GetComponent<Text>().text = (character.baseAtk + character.equipAtk).ToString();
         child.FindChild("defContent").GetComponent<Text>().text = (character.baseDef + character.equipDef).ToString();
         characterIfo.transform.FindChild("lvContent").GetComponent<Text>().text = character.level.ToString();
-        characterIfo.transform.FindChild("hpContent").GetComponent<Text>().text = character.baseVarHP.ToString() + "/" + character.baseFixHP.ToString();
+        characterIfo.transform.FindChild("hpContent").GetComponent<Text>().text = character.baseVarHP.ToString() + "/" + (character.baseFixHP + character.equipHP).ToString();
         characterIfo.transform.FindChild("atkContent").GetComponent<Text>().text = (character.baseAtk + character.equipAtk).ToString();
         characterIfo.transform.FindChild("defContent").GetComponent<Text>().text = (character.baseDef + character.equipDef).ToString();
     }
@@ -113,7 +113,9 @@ public class TeamInfoManager : MonoBehaviour
 
         characterIfo.SetActive(true);
         characterIfo.transform.FindChild("lvContent").GetComponent<Text>().text = character.level.ToString();
-        characterIfo.transform.FindChild("hpContent").GetComponent<Text>().text = character.baseVarHP.ToString() + "/" + character.baseFixHP.ToString();
+        Debug.Log("baseFixHP:" + character.baseFixHP);
+        Debug.Log("equipHP:" + character.equipHP);
+        characterIfo.transform.FindChild("hpContent").GetComponent<Text>().text = character.baseVarHP.ToString() + "/" + (character.baseFixHP + character.equipHP).ToString();
         characterIfo.transform.FindChild("atkContent").GetComponent<Text>().text = (character.baseAtk + character.equipAtk).ToString();
         characterIfo.transform.FindChild("defContent").GetComponent<Text>().text = (character.baseDef + character.equipDef).ToString();
 
