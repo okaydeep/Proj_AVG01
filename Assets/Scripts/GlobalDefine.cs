@@ -19,7 +19,22 @@ namespace GlobalDefine
 
     public class GameSetting
     {
-        public const int BATTLE_ROUND_TIME = 10;
+		public const float BATTLE_ROUND_TIME = 2f;		// 戰鬥一回合所需花費的時間(秒)
+
+		public const int NORMALSTAGE_MAX_FLOOR = 5000;	// 一般關卡最高樓層
+
+        public static string BATTLE_HISTORY_FILEPATH = Application.persistentDataPath + "\\" + "history.txt";
+
+        public static string START_BATTLE_TIME_KEY = "START_BATTLE_TIME_KEY";
+        public static string ALREADY_UPDATE_TIMES_KEY = "ALREADY_UPDATE_TIMES_KEY";
+    }
+
+    public class GeneralFunctions
+    {
+        public static long GetNotTimestamp()
+        {
+            return (long)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
+        }
     }
 
     [Serializable]
@@ -32,23 +47,11 @@ namespace GlobalDefine
         [SerializeField]
         public int money;                           // 錢
         [SerializeField]
-        public long lastLoginTimestamp;             // 最後一次開啟遊戲時間
-        [SerializeField]
         public List<ItemData> ownItemData; // 物品資料, 第一個參數是物品id, 第二個是數量
                                            // public List<Dictionary<int, int>> itemData;
         [SerializeField]
         public int teamData;
-       // public List<Character> teamData;            // 隊伍資料
-
-        public void UpdateLastLoginTimestamp()
-        {
-            lastLoginTimestamp = (long)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
-        }
-
-        public int GetAccmSecondsAfterLastLogin()
-        {
-            return (int)((long)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds - lastLoginTimestamp);
-        }
+        // public List<Character> teamData;            // 隊伍資料
     }
 
     [Serializable]
@@ -94,6 +97,8 @@ namespace GlobalDefine
     [Serializable]
     public class Character : CharBase
     {
+        [SerializeField]
+        public string chrName;             // 名稱
         [SerializeField]
         public int item_atk;             // 武器id
         [SerializeField]

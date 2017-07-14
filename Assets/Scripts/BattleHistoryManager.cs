@@ -3,6 +3,12 @@ using System.Collections;
 
 public class BattleHistoryManager : MonoBehaviour {
 
+    void OnEnable () {
+        BattleHandle.instance.StartCalculateBattleResult(()=>{
+            BattleHandle.instance.LoadHistory();
+        });
+    }
+
 	// Use this for initialization
 	void Start () {
 	
