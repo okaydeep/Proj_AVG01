@@ -139,24 +139,24 @@ public class BattleHandle : MonoBehaviour {
         // test
         Character chr = new Character();
         chr.chrName = "Henry";
-        chr.finalHP = 300;
-        chr.finalAtk = 6;
-        chr.finalDef = 2;
+        chr.equipHP = 300;
+        chr.equipAtk = 6;
+        chr.equipDef = 2;
         playerTeam.Add(chr);
         chr = new Character();
         chr.chrName = "Davis";
-        chr.finalHP = 200;
-        chr.finalAtk = 7;
-        chr.finalDef = 1;
+        chr.equipHP = 200;
+        chr.equipAtk = 7;
+        chr.equipDef = 1;
         playerTeam.Add(chr);
         chr = new Character();
         chr.chrName = "Woody";
-        chr.finalHP = 350;
-        chr.finalAtk = 4;
-        chr.finalDef = 4;
+        chr.equipHP = 350;
+        chr.equipAtk = 4;
+        chr.equipDef = 4;
         playerTeam.Add(chr);
 
-        playerTeam = playerTeam.OrderBy(val => val.finalHP).ToList();
+        playerTeam = playerTeam.OrderBy(val => val.equipHP).ToList();
     }
 
     void SetEnemyTeamByFloor(int floor)
@@ -168,9 +168,9 @@ public class BattleHandle : MonoBehaviour {
         for (int i = 0; i < 3; i++)
         {
             Monster mob = new Monster();
-            mob.finalHP = floor * 10+5;
-            mob.finalAtk = floor * 3+2;
-            mob.finalDef = floor * 1+1;
+            mob.equipHP = floor * 10+5;
+            mob.equipAtk = floor * 3+2;
+            mob.equipDef = floor * 1+1;
             enemyTeam.Add(mob);
         }
     }
@@ -182,15 +182,15 @@ public class BattleHandle : MonoBehaviour {
             if (enemyTeam.Count <= 0)
                 break;
 
-            int dmg = playerTeam[i].finalAtk - enemyTeam[0].finalDef;
+            int dmg = playerTeam[i].equipAtk - enemyTeam[0].equipDef;
             if (dmg <= 0)
                 dmg = 1;
 
-            enemyTeam[0].finalHP -= dmg;
+            enemyTeam[0].equipHP -= dmg;
 
-            SaveHistory("Enemy takes damage " + dmg.ToString() + " from " + playerTeam[i].chrName + " (remain hp: " + enemyTeam[0].finalHP + ")");
+            SaveHistory("Enemy takes damage " + dmg.ToString() + " from " + playerTeam[i].chrName + " (remain hp: " + enemyTeam[0].equipHP + ")");
 
-            if (enemyTeam[0].finalHP <= 0)
+            if (enemyTeam[0].equipHP <= 0)
             {
                 SaveHistory("Enemy died");
 
@@ -206,15 +206,15 @@ public class BattleHandle : MonoBehaviour {
             if (playerTeam.Count <= 0)
                 break;
 
-            int dmg = enemyTeam[i].finalAtk - playerTeam[0].finalDef;
+            int dmg = enemyTeam[i].equipAtk - playerTeam[0].equipDef;
             if (dmg <= 0)
                 dmg = 1;
 
-            playerTeam[0].finalHP -= dmg;
+            playerTeam[0].equipHP -= dmg;
 
-            SaveHistory(playerTeam[0].chrName + " takes damage " + dmg.ToString() + " from enemy (remain hp: " + playerTeam[0].finalHP + ")");
+            SaveHistory(playerTeam[0].chrName + " takes damage " + dmg.ToString() + " from enemy (remain hp: " + playerTeam[0].equipHP + ")");
 
-            if (playerTeam[0].finalHP <= 0)
+            if (playerTeam[0].equipHP <= 0)
             {
                 SaveHistory(playerTeam[0].chrName + " died");
 
