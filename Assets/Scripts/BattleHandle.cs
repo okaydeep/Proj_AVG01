@@ -237,6 +237,7 @@ public class BattleHandle : MonoBehaviour {
         }
 
         Debug.Log(msg);
+        BattleHistoryManager.instance.AddMsgToList(msg);
     }
 
     public string[] LoadHistory()
