@@ -227,14 +227,11 @@ public class BattleHandle : MonoBehaviour {
     {
         if (writeHistory == false)
             return;
-
-        if (!File.Exists(GameSetting.BATTLE_HISTORY_FILEPATH))
-            File.CreateText(GameSetting.BATTLE_HISTORY_FILEPATH);
-
-        using (StreamWriter w = File.AppendText(GameSetting.BATTLE_HISTORY_FILEPATH))
-        {
-            w.WriteLine(msg);
-        }
+		
+		using (StreamWriter sw = (File.Exists(GameSetting.BATTLE_HISTORY_FILEPATH)) ? File.AppendText(GameSetting.BATTLE_HISTORY_FILEPATH) : File.CreateText(GameSetting.BATTLE_HISTORY_FILEPATH))
+		{
+			sw.WriteLine(msg);
+		}
 
         Debug.Log(msg);
         BattleHistoryManager.instance.AddMsgToList(msg);
