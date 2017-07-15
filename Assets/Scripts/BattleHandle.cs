@@ -23,8 +23,6 @@ public class BattleHandle : MonoBehaviour {
 
     public delegate void CalaulateBattleFinish();
 
-    FileInfo f;
-
 	void Awake () {
 		instance = this;
 	}
@@ -36,8 +34,6 @@ public class BattleHandle : MonoBehaviour {
 
         playerTeam = new List<Character>();
         enemyTeam = new List<Monster>();
-
-        f = new FileInfo(GameSetting.BATTLE_HISTORY_FILEPATH);
 	}
 	
 	// Update is called once per frame
@@ -50,6 +46,7 @@ public class BattleHandle : MonoBehaviour {
 
 	}
 
+	// 更新戰鬥時戳
     void UpdateBattleTime()
     {
         startBattleTime = GeneralFunctions.GetNotTimestamp();
@@ -58,6 +55,7 @@ public class BattleHandle : MonoBehaviour {
         PlayerPrefs.Save();
     }
 
+	// 戰鬥開始(按下探索按鈕)
     public void BattleStart()
     {
         if (File.Exists(GameSetting.BATTLE_HISTORY_FILEPATH))
@@ -78,6 +76,7 @@ public class BattleHandle : MonoBehaviour {
         StartCoroutine(BattleUpdate());
     }
 
+	// 一般戰鬥回合更新
     IEnumerator BattleUpdate()
     {
         alreadyUpdateTimes++;
@@ -99,7 +98,7 @@ public class BattleHandle : MonoBehaviour {
         if (playerTeam.Count <= 0)
         {
             SaveHistory(currentFloor.ToString() + " floor failed!");
-            // TODO 結算
+            // TODO 結算, 更新玩家資料
             yield break;
         }
 
@@ -108,6 +107,7 @@ public class BattleHandle : MonoBehaviour {
         yield return null;
     }
 
+	// 戰鬥回合更新(計算用)
     IEnumerator CalculateBattleUpdate()
     {
         PlayerTeamAttack();
@@ -131,6 +131,7 @@ public class BattleHandle : MonoBehaviour {
         yield return null;
     }
 
+	// 取得玩家隊伍資料
     void SetPlayerTeamData()
     {
         if (playerTeam != null)
@@ -159,6 +160,7 @@ public class BattleHandle : MonoBehaviour {
         playerTeam = playerTeam.OrderBy(val => val.equipHP).ToList();
     }
 
+	// 根據樓層取得敵人隊伍資料
     void SetEnemyTeamByFloor(int floor)
     {
         if (enemyTeam != null)
@@ -223,6 +225,7 @@ public class BattleHandle : MonoBehaviour {
         }
     }
 
+	// 儲存紀錄
     public void SaveHistory(string msg)
     {
         if (writeHistory == false)
@@ -237,6 +240,7 @@ public class BattleHandle : MonoBehaviour {
         BattleHistoryManager.instance.AddMsgToList(msg);
     }
 
+	// 讀取紀錄
     public string[] LoadHistory()
     {
         StreamReader r = File.OpenText(GameSetting.BATTLE_HISTORY_FILEPATH);
@@ -284,7 +288,7 @@ public class BattleHandle : MonoBehaviour {
 
             if (playerTeam.Count <= 0)
             {
-                // TODO 結算
+                // TODO 結算, 更新玩家資料
                 if (finishEvt != null)
                     finishEvt();
                 yield break;
