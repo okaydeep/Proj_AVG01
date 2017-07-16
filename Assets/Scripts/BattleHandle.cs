@@ -6,12 +6,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using GlobalDefine;
 
-public class BattleHandle : MonoBehaviour {
+public class BattleHandle : MonoBehaviour
+{
 
-	public static BattleHandle instance;
+    public static BattleHandle instance;
 
-	public int targetFloor;
-	public bool autoUseItem;
+    public int targetFloor;
+    public bool autoUseItem;
 
     bool traveling;
     bool writeHistory;
@@ -23,30 +24,33 @@ public class BattleHandle : MonoBehaviour {
 
     public delegate void CalaulateBattleFinish();
 
-	void Awake () {
-		instance = this;
-	}
+    void Awake()
+    {
+        instance = this;
+    }
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start()
+    {
         traveling = false;
         writeHistory = true;
 
         playerTeam = new List<Character>();
         enemyTeam = new List<Monster>();
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+    }
 
-	void _getPlayerData()
-	{
+    // Update is called once per frame
+    void Update()
+    {
 
-	}
+    }
 
-	// 更新戰鬥時戳
+    void _getPlayerData()
+    {
+
+    }
+
+    // 更新戰鬥時戳
     void UpdateBattleTime()
     {
         startBattleTime = GeneralFunctions.GetNotTimestamp();
@@ -55,7 +59,7 @@ public class BattleHandle : MonoBehaviour {
         PlayerPrefs.Save();
     }
 
-	// 戰鬥開始(按下探索按鈕)
+    // 戰鬥開始(按下探索按鈕)
     public void BattleStart()
     {
         if (File.Exists(GameSetting.BATTLE_HISTORY_FILEPATH))
@@ -76,7 +80,7 @@ public class BattleHandle : MonoBehaviour {
         StartCoroutine(BattleUpdate());
     }
 
-	// 一般戰鬥回合更新
+    // 一般戰鬥回合更新
     IEnumerator BattleUpdate()
     {
         alreadyUpdateTimes++;
@@ -107,7 +111,7 @@ public class BattleHandle : MonoBehaviour {
         yield return null;
     }
 
-	// 戰鬥回合更新(計算用)
+    // 戰鬥回合更新(計算用)
     IEnumerator CalculateBattleUpdate()
     {
         PlayerTeamAttack();
@@ -131,36 +135,44 @@ public class BattleHandle : MonoBehaviour {
         yield return null;
     }
 
-	// 取得玩家隊伍資料
+    // 取得玩家隊伍資料
     void SetPlayerTeamData()
     {
         if (playerTeam != null)
             playerTeam.Clear();
+        PlayerData playerData = (PlayerData)PlayerDataManager.instance.Load("playerdata", typeof(PlayerData));
+        int teamMemberCount = playerData.teamData;
+        for (int i = 1; i <= teamMemberCount; i++)
+        {
+            string dataPath = "character" + i;
+           Character character = (Character)PlayerDataManager.instance.Load(dataPath, typeof(Character));
+           playerTeam.Add(character);
 
+        }
         // test
-        Character chr = new Character();
-        chr.chrName = "Henry";
-        chr.equipHP = 300;
-        chr.equipAtk = 6;
-        chr.equipDef = 2;
-        playerTeam.Add(chr);
-        chr = new Character();
-        chr.chrName = "Davis";
-        chr.equipHP = 200;
-        chr.equipAtk = 7;
-        chr.equipDef = 1;
-        playerTeam.Add(chr);
-        chr = new Character();
-        chr.chrName = "Woody";
-        chr.equipHP = 350;
-        chr.equipAtk = 4;
-        chr.equipDef = 4;
-        playerTeam.Add(chr);
+        //Character chr = new Character();
+        //chr.chrName = "Henry";
+        //chr.equipHP = 300;
+        //chr.equipAtk = 6;
+        //chr.equipDef = 2;
+        //playerTeam.Add(chr);
+        //chr = new Character();
+        //chr.chrName = "Davis";
+        //chr.equipHP = 200;
+        //chr.equipAtk = 7;
+        //chr.equipDef = 1;
+        //playerTeam.Add(chr);
+        //chr = new Character();
+        //chr.chrName = "Woody";
+        //chr.equipHP = 350;
+        //chr.equipAtk = 4;
+        //chr.equipDef = 4;
+        //playerTeam.Add(chr);
 
         playerTeam = playerTeam.OrderBy(val => val.equipHP).ToList();
     }
 
-	// 根據樓層取得敵人隊伍資料
+    // 根據樓層取得敵人隊伍資料
     void SetEnemyTeamByFloor(int floor)
     {
         if (enemyTeam != null)
@@ -170,9 +182,9 @@ public class BattleHandle : MonoBehaviour {
         for (int i = 0; i < 3; i++)
         {
             Monster mob = new Monster();
-            mob.equipHP = floor * 10+5;
-            mob.equipAtk = floor * 3+2;
-            mob.equipDef = floor * 1+1;
+            mob.equipHP = floor * 10 + 5;
+            mob.equipAtk = floor * 3 + 2;
+            mob.equipDef = floor * 1 + 1;
             enemyTeam.Add(mob);
         }
     }
@@ -225,22 +237,22 @@ public class BattleHandle : MonoBehaviour {
         }
     }
 
-	// 儲存紀錄
+    // 儲存紀錄
     public void SaveHistory(string msg)
     {
         if (writeHistory == false)
             return;
-		
-		using (StreamWriter sw = (File.Exists(GameSetting.BATTLE_HISTORY_FILEPATH)) ? File.AppendText(GameSetting.BATTLE_HISTORY_FILEPATH) : File.CreateText(GameSetting.BATTLE_HISTORY_FILEPATH))
-		{
-			sw.WriteLine(msg);
-		}
+
+        using (StreamWriter sw = (File.Exists(GameSetting.BATTLE_HISTORY_FILEPATH)) ? File.AppendText(GameSetting.BATTLE_HISTORY_FILEPATH) : File.CreateText(GameSetting.BATTLE_HISTORY_FILEPATH))
+        {
+            sw.WriteLine(msg);
+        }
 
         Debug.Log(msg);
         BattleHistoryManager.instance.AddMsgToList(msg);
     }
 
-	// 讀取紀錄
+    // 讀取紀錄
     public string[] LoadHistory()
     {
         StreamReader r = File.OpenText(GameSetting.BATTLE_HISTORY_FILEPATH);
@@ -265,7 +277,7 @@ public class BattleHandle : MonoBehaviour {
 
         if (PlayerPrefs.HasKey(GameSetting.ALREADY_UPDATE_TIMES_KEY))
             alreadyUpdateTimes = PlayerPrefs.GetInt(GameSetting.ALREADY_UPDATE_TIMES_KEY, 0);
-        
+
         if (startBattleTime <= 0)
         {
             if (finishEvt != null)
@@ -293,7 +305,7 @@ public class BattleHandle : MonoBehaviour {
                     finishEvt();
                 yield break;
             }
-            
+
             yield return StartCoroutine(CalculateBattleUpdate());
         }
 

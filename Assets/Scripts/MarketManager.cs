@@ -25,6 +25,7 @@ public class MarketManager : MonoBehaviour
     private int ownTeamMember = 0;
     private int ownMoney = 0;
     private String hirePrice = "500";
+    private String[] characterName = { "Deep", "Slow", "Jessie", "Ruby" };
 
     public enum Market_Page
     {
@@ -103,7 +104,7 @@ public class MarketManager : MonoBehaviour
             gobj.transform.localScale = parent.transform.localScale;
             
           //  gobj.GetComponentInChildren<Text>().text = ownItemDataList[i - 1].name;
-            gobj.GetComponentInChildren<Button>().transform.FindChild("title").GetComponent<Text>().text = ownItemDataList[i - 1].name;
+            gobj.GetComponentInChildren<Button>().transform.Find("title").GetComponent<Text>().text = ownItemDataList[i - 1].name;
           //依ID顯示加成文字
             string t="";
             switch (i)
@@ -135,7 +136,7 @@ public class MarketManager : MonoBehaviour
             }
 
             
-            gobj.GetComponentInChildren<Button>().transform.FindChild("content").GetComponent<Text>().text =t+ ownItemDataList[i - 1].attr.ToString();
+            gobj.GetComponentInChildren<Button>().transform.Find("content").GetComponent<Text>().text =t+ ownItemDataList[i - 1].attr.ToString();
 
 
             Button btn = gobj.GetComponentInChildren<Button>();
@@ -204,10 +205,10 @@ public class MarketManager : MonoBehaviour
 
         PlayerData playerData = (PlayerData)PlayerDataManager.instance.Load("playerdata", typeof(PlayerData));
         List<ItemData> ownItemDataList = playerData.ownItemData;
-        PurchaseDialog.transform.FindChild("title").GetComponent<Text>().text = ownItemDataList[id - 1].name;
-        PurchaseDialog.transform.FindChild("price").GetComponent<Text>().text = ownItemDataList[id - 1].price.ToString();
-        PurchaseDialog.transform.FindChild("ID").GetChild(0).gameObject.name = sender.name;
-        PurchaseDialog.transform.FindChild("holdNum").GetComponent<Text>().text = ownItemDataList[id - 1].ownCount.ToString();
+        PurchaseDialog.transform.Find("title").GetComponent<Text>().text = ownItemDataList[id - 1].name;
+        PurchaseDialog.transform.Find("price").GetComponent<Text>().text = ownItemDataList[id - 1].price.ToString();
+        PurchaseDialog.transform.Find("ID").GetChild(0).gameObject.name = sender.name;
+        PurchaseDialog.transform.Find("holdNum").GetComponent<Text>().text = ownItemDataList[id - 1].ownCount.ToString();
     }
 
     public void OnSellInformation(GameObject sender)
@@ -221,19 +222,19 @@ public class MarketManager : MonoBehaviour
         ItemData itemData = ownItemDataList[id - 1];
         int price = itemData.price / 2;
 
-        SellDialog.transform.FindChild("title").GetComponent<Text>().text = itemData.name;
-        SellDialog.transform.FindChild("price").GetComponent<Text>().text = price.ToString();
-        SellDialog.transform.FindChild("ID").GetChild(0).gameObject.name = sender.name;
+        SellDialog.transform.Find("title").GetComponent<Text>().text = itemData.name;
+        SellDialog.transform.Find("price").GetComponent<Text>().text = price.ToString();
+        SellDialog.transform.Find("ID").GetChild(0).gameObject.name = sender.name;
         //顯示未裝備的數量
         int remainCount = itemData.ownCount - itemData.equipmentCount;
-        SellDialog.transform.FindChild("holdNum").GetComponent<Text>().text = remainCount.ToString();
+        SellDialog.transform.Find("holdNum").GetComponent<Text>().text = remainCount.ToString();
     }
 
     public void Buy(int num)
     {
         //價格
-        int price = int.Parse(PurchaseDialog.transform.FindChild("price").GetComponent<Text>().text);
-        int id = int.Parse(PurchaseDialog.transform.FindChild("ID").GetChild(0).gameObject.name);
+        int price = int.Parse(PurchaseDialog.transform.Find("price").GetComponent<Text>().text);
+        int id = int.Parse(PurchaseDialog.transform.Find("ID").GetChild(0).gameObject.name);
         Debug.Log("price:" + price);
 
         PlayerData playerData = (PlayerData)PlayerDataManager.instance.Load("playerdata", typeof(PlayerData));
@@ -245,7 +246,7 @@ public class MarketManager : MonoBehaviour
         bool moneyEnough = reduceMoney(price * num);
         if (!moneyEnough)
             return;
-        Text hold = PurchaseDialog.transform.FindChild("holdNum").GetComponent<Text>();
+        Text hold = PurchaseDialog.transform.Find("holdNum").GetComponent<Text>();
         count += num;
         hold.text = count.ToString();
         ownItemDataList[id - 1].ownCount = count;
@@ -255,10 +256,10 @@ public class MarketManager : MonoBehaviour
     public void Sell(int num)
     {
         //價格
-        int price = int.Parse(SellDialog.transform.FindChild("price").GetComponent<Text>().text);
+        int price = int.Parse(SellDialog.transform.Find("price").GetComponent<Text>().text);
         Debug.Log("price:" + price);
         //目前數量+num
-        int id = int.Parse(SellDialog.transform.FindChild("ID").GetChild(0).gameObject.name);
+        int id = int.Parse(SellDialog.transform.Find("ID").GetChild(0).gameObject.name);
         PlayerData playerData = (PlayerData)PlayerDataManager.instance.Load("playerdata", typeof(PlayerData));
         List<ItemData> ownItemDataList = playerData.ownItemData;
         int count = ownItemDataList[id - 1].ownCount;
@@ -273,7 +274,7 @@ public class MarketManager : MonoBehaviour
             Destroy(parent.transform.Find(id.ToString()).gameObject);
         }
 
-        Text hold = SellDialog.transform.FindChild("holdNum").GetComponent<Text>();
+        Text hold = SellDialog.transform.Find("holdNum").GetComponent<Text>();
         count -= num;
         Debug.Log("剩餘數量:" + count);
         hold.text = count.ToString();
@@ -392,7 +393,7 @@ public class MarketManager : MonoBehaviour
                 break;
         }
 
-        hireDialog.transform.FindChild("hirePrice").GetComponent<Text>().text = hirePrice;
+        hireDialog.transform.Find("hirePrice").GetComponent<Text>().text = hirePrice;
         currentPage = (int)Market_Page.Taven;
 
 
@@ -442,13 +443,14 @@ public class MarketManager : MonoBehaviour
         character.baseAtk = UnityEngine.Random.Range(10, 16);
         character.baseDef = UnityEngine.Random.Range(10, 16);
 
+        character.chrName = characterName[ownCount-1];
 
         pd.teamData = ownCount;
         PlayerDataManager.instance.Save(dataPath, character);
         PlayerDataManager.instance.Save("playerdata", pd);
 
         charcterDialog.SetActive(true);
-        showHireDialog(character.baseFixHP, character.baseAtk, character.baseDef);
+        showHireDialog(character.chrName,character.baseFixHP, character.baseAtk, character.baseDef);
         Debug.Log("===InitTeamData===");
         TeamInfoManager.instance.InitTeamData();
         Debug.Log("===InitTeamData===");
@@ -525,13 +527,13 @@ public class MarketManager : MonoBehaviour
     //    PlayerDataManager.instance.Save("playerdata", playerData);
     //}
 
-    private void showHireDialog(int hp, int atk, int def)
+    private void showHireDialog(string name,int hp, int atk, int def)
     {
         hireDialog.SetActive(false);
-        charcterDialog.transform.FindChild("name").GetComponent<Text>().text = "測試員";
-        charcterDialog.transform.FindChild("hpContent").GetComponent<Text>().text = hp.ToString();
-        charcterDialog.transform.FindChild("atkContent").GetComponent<Text>().text = atk.ToString();
-        charcterDialog.transform.FindChild("defContent").GetComponent<Text>().text = def.ToString();
+        charcterDialog.transform.Find("name").GetComponent<Text>().text = name;
+        charcterDialog.transform.Find("hpContent").GetComponent<Text>().text = hp.ToString();
+        charcterDialog.transform.Find("atkContent").GetComponent<Text>().text = atk.ToString();
+        charcterDialog.transform.Find("defContent").GetComponent<Text>().text = def.ToString();
     }
 
     /*

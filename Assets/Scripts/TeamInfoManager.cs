@@ -78,10 +78,6 @@ public class TeamInfoManager : MonoBehaviour
             });
             Transform child = btn.transform;
             updateTeamInfo(child);
-            //child.FindChild("lvContent").GetComponent<Text>().text = character.level.ToString();
-            //child.FindChild("hpContent").GetComponent<Text>().text = character.baseVarHP.ToString() + "/" + character.baseFixHP.ToString();
-            //child.FindChild("atkContent").GetComponent<Text>().text = (character.baseAtk + character.equipAtk).ToString();
-            //child.FindChild("defContent").GetComponent<Text>().text = (character.baseDef + character.equipDef).ToString();
 
         }
 
@@ -90,14 +86,16 @@ public class TeamInfoManager : MonoBehaviour
 
     private void updateTeamInfo(Transform child)
     {
-        child.FindChild("lvContent").GetComponent<Text>().text = character.level.ToString();
-        child.FindChild("hpContent").GetComponent<Text>().text = character.baseVarHP.ToString() + "/" + (character.baseFixHP + character.equipHP).ToString();
-        child.FindChild("atkContent").GetComponent<Text>().text = (character.baseAtk + character.equipAtk).ToString();
-        child.FindChild("defContent").GetComponent<Text>().text = (character.baseDef + character.equipDef).ToString();
-        characterIfo.transform.FindChild("lvContent").GetComponent<Text>().text = character.level.ToString();
-        characterIfo.transform.FindChild("hpContent").GetComponent<Text>().text = character.baseVarHP.ToString() + "/" + (character.baseFixHP + character.equipHP).ToString();
-        characterIfo.transform.FindChild("atkContent").GetComponent<Text>().text = (character.baseAtk + character.equipAtk).ToString();
-        characterIfo.transform.FindChild("defContent").GetComponent<Text>().text = (character.baseDef + character.equipDef).ToString();
+        child.Find("name").GetComponent<Text>().text = character.chrName;
+        child.Find("lvContent").GetComponent<Text>().text = character.level.ToString();
+        child.Find("hpContent").GetComponent<Text>().text = character.baseVarHP.ToString() + "/" + (character.baseFixHP + character.equipHP).ToString();
+        child.Find("atkContent").GetComponent<Text>().text = (character.baseAtk + character.equipAtk).ToString();
+        child.Find("defContent").GetComponent<Text>().text = (character.baseDef + character.equipDef).ToString();
+        characterIfo.transform.Find("name").GetComponent<Text>().text = character.chrName;
+        characterIfo.transform.Find("lvContent").GetComponent<Text>().text = character.level.ToString();
+        characterIfo.transform.Find("hpContent").GetComponent<Text>().text = character.baseVarHP.ToString() + "/" + (character.baseFixHP + character.equipHP).ToString();
+        characterIfo.transform.Find("atkContent").GetComponent<Text>().text = (character.baseAtk + character.equipAtk).ToString();
+        characterIfo.transform.Find("defContent").GetComponent<Text>().text = (character.baseDef + character.equipDef).ToString();
     }
 
 
@@ -112,12 +110,14 @@ public class TeamInfoManager : MonoBehaviour
         character = (Character)PlayerDataManager.instance.Load(dataPath, typeof(Character));
 
         characterIfo.SetActive(true);
-        characterIfo.transform.FindChild("lvContent").GetComponent<Text>().text = character.level.ToString();
+        characterIfo.transform.Find("name").GetComponent<Text>().text = character.chrName;
+        characterIfo.transform.Find("lvContent").GetComponent<Text>().text = character.level.ToString();
         Debug.Log("baseFixHP:" + character.baseFixHP);
         Debug.Log("equipHP:" + character.equipHP);
-        characterIfo.transform.FindChild("hpContent").GetComponent<Text>().text = character.baseVarHP.ToString() + "/" + (character.baseFixHP + character.equipHP).ToString();
-        characterIfo.transform.FindChild("atkContent").GetComponent<Text>().text = (character.baseAtk + character.equipAtk).ToString();
-        characterIfo.transform.FindChild("defContent").GetComponent<Text>().text = (character.baseDef + character.equipDef).ToString();
+
+        characterIfo.transform.Find("hpContent").GetComponent<Text>().text = character.baseVarHP.ToString() + "/" + (character.baseFixHP + character.equipHP).ToString();
+        characterIfo.transform.Find("atkContent").GetComponent<Text>().text = (character.baseAtk + character.equipAtk).ToString();
+        characterIfo.transform.Find("defContent").GetComponent<Text>().text = (character.baseDef + character.equipDef).ToString();
 
         List<ItemData> ownItemDataList = playerData.ownItemData;
         ItemData itemData;
@@ -197,6 +197,7 @@ public class TeamInfoManager : MonoBehaviour
             case "Scroll View":
                 CanvasManager.instance.ShowCanvas(GlobalDefine.GCanvas.BattleMenu);
                 characterIfo.SetActive(false);
+                equipmentList.SetActive(false);
                 break;
 
             case "equipmentList":
@@ -294,7 +295,7 @@ public class TeamInfoManager : MonoBehaviour
         //詢問要不要裝備
         equipmentDialog.SetActive(true);
         equipId.name = sender.name;
-        equipmentDialog.transform.FindChild("itemName").GetComponent<Text>().text = itemD.name;
+        equipmentDialog.transform.Find("itemName").GetComponent<Text>().text = itemD.name;
 
     }
 
