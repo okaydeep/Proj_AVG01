@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using GlobalDefine;
+using System.Linq;
+
 public class MarketManager : MonoBehaviour
 {
     public GameObject[] MarketObjs;
@@ -25,7 +27,7 @@ public class MarketManager : MonoBehaviour
     private int ownTeamMember = 0;
     private int ownMoney = 0;
     private String hirePrice = "500";
-    private String[] characterName = { "Deep", "Slow", "Jessie", "Ruby" };
+    private String[] characterName = { "Deep", "Slow", "Jessie", "Ruby", "Mary", "Steve", "Isabel", "Max", "Ray", "Cindy", "Jack", "Rose" };
 
     public enum Market_Page
     {
@@ -102,11 +104,11 @@ public class MarketManager : MonoBehaviour
             gobj.name = i.ToString();// id
             gobj.transform.SetParent(parent);
             gobj.transform.localScale = parent.transform.localScale;
-            
-          //  gobj.GetComponentInChildren<Text>().text = ownItemDataList[i - 1].name;
+
+            //  gobj.GetComponentInChildren<Text>().text = ownItemDataList[i - 1].name;
             gobj.GetComponentInChildren<Button>().transform.Find("title").GetComponent<Text>().text = ownItemDataList[i - 1].name;
-          //依ID顯示加成文字
-            string t="";
+            //依ID顯示加成文字
+            string t = "";
             switch (i)
             {
                 case 1://補HP
@@ -135,12 +137,12 @@ public class MarketManager : MonoBehaviour
                     break;
             }
 
-            
-            gobj.GetComponentInChildren<Button>().transform.Find("content").GetComponent<Text>().text =t+ ownItemDataList[i - 1].attr.ToString();
+
+            gobj.GetComponentInChildren<Button>().transform.Find("content").GetComponent<Text>().text = t + ownItemDataList[i - 1].attr.ToString();
 
 
             Button btn = gobj.GetComponentInChildren<Button>();
-            btn.onClick.AddListener(delegate()
+            btn.onClick.AddListener(delegate ()
             {
                 this.OnBuyInformation(gobj);
             });
@@ -185,7 +187,7 @@ public class MarketManager : MonoBehaviour
 
 
             Button btn = gobj.GetComponentInChildren<Button>();
-            btn.onClick.AddListener(delegate()
+            btn.onClick.AddListener(delegate ()
             {
                 this.OnSellInformation(gobj);
             });
@@ -372,11 +374,18 @@ public class MarketManager : MonoBehaviour
 
     public void Taven()
     {
-        hireDialog.SetActive(true);
+        
         PlayerData pd = (PlayerData)PlayerDataManager.instance.Load("playerdata", typeof(PlayerData));
 
         ownTeamMember = pd.teamData;
+        if (pd.teamData == 4)
+        {
+            Debug.Log("傭兵滿了");
+            return;
 
+        }
+
+        hireDialog.SetActive(true);
         switch (ownTeamMember)
         {
             case 0:
@@ -427,7 +436,7 @@ public class MarketManager : MonoBehaviour
         PlayerData pd = (PlayerData)PlayerDataManager.instance.Load("playerdata", typeof(PlayerData));
 
         int ownCount = ownTeamMember + 1;
-        Debug.Log("ownCount:" + ownCount);
+      //  Debug.Log("ownCount:" + ownCount);
         if (ownCount > 4)
         {
             Debug.Log("傭兵滿了");
@@ -438,23 +447,73 @@ public class MarketManager : MonoBehaviour
 
         UnityEngine.Random.InitState(System.Guid.NewGuid().GetHashCode());
         character.level = 1;
-        character.baseFixHP = UnityEngine.Random.Range(200, 241);
+        character.baseFixHP = UnityEngine.Random.Range(200, 241);//200-240
         character.baseVarHP = character.baseFixHP;
         character.baseAtk = UnityEngine.Random.Range(10, 16);
         character.baseDef = UnityEngine.Random.Range(10, 16);
 
-        character.chrName = characterName[ownCount-1];
+        int characterId = UnityEngine.Random.Range(1, pd.characterInfoList.Count);
 
+        List<int> usedId;
+        if (pd.usedId.Count == 0)
+        {
+            usedId = new List<int>();
+        }
+        else
+        {
+            usedId = pd.usedId;
+        }
+        
+        int rndID=checkUsedID(pd, characterId);
+
+      
+        usedId.Add(rndID);
+        pd.usedId = usedId;
+
+        String name = pd.characterInfoList[characterId - 1].name;
+        Debug.Log("name:" + name);
+        character.chrName = name;
+   
         pd.teamData = ownCount;
         PlayerDataManager.instance.Save(dataPath, character);
         PlayerDataManager.instance.Save("playerdata", pd);
 
         charcterDialog.SetActive(true);
-        showHireDialog(character.chrName,character.baseFixHP, character.baseAtk, character.baseDef);
-        Debug.Log("===InitTeamData===");
+        showHireDialog(character.chrName, character.baseFixHP, character.baseAtk, character.baseDef);
+      //  Debug.Log("===InitTeamData===");
         TeamInfoManager.instance.InitTeamData();
-        Debug.Log("===InitTeamData===");
+     //   Debug.Log("===InitTeamData===");
     }
+
+    private int checkUsedID(PlayerData pd, int characterId)
+    {
+        List<int> usedId;
+        if (pd.usedId.Count == 0)
+        {
+            usedId = new List<int>();
+        }
+        else
+        {
+            usedId = pd.usedId;
+        }
+
+        Debug.Log("===checkUsedID===characterId:" + characterId);
+
+        if (usedId.Contains(characterId))
+        {
+         
+            int randomId = UnityEngine.Random.Range(1, pd.characterInfoList.Count);
+            Debug.Log("===checkUsedID===randomId:" + randomId);
+            checkUsedID(pd, randomId);
+            return randomId;
+        }
+        else
+        {
+            return characterId;
+        }
+    }
+
+
 
     public void Cancel()
     {
@@ -527,7 +586,7 @@ public class MarketManager : MonoBehaviour
     //    PlayerDataManager.instance.Save("playerdata", playerData);
     //}
 
-    private void showHireDialog(string name,int hp, int atk, int def)
+    private void showHireDialog(string name, int hp, int atk, int def)
     {
         hireDialog.SetActive(false);
         charcterDialog.transform.Find("name").GetComponent<Text>().text = name;

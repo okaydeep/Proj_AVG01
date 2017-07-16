@@ -69,5 +69,22 @@ public class GameManager : MonoBehaviour {
         }
         playerData.ownItemData = itemDataList;
         PlayerDataManager.instance.Save("playerdata", playerData);
+
+        
+    
+        //
+        List<GlobalDefine.CharacterInfo> characterInfoList = new List<GlobalDefine.CharacterInfo>();
+        XmlDocument xml2 = new XmlDocument();
+        xml2.Load(XmlReader.Create((Application.dataPath + "/CharacterName.xml"), set));
+        xmlNodeList = xml2.SelectSingleNode("objects").ChildNodes;
+        foreach (XmlElement x2 in xmlNodeList)
+        {
+            GlobalDefine.CharacterInfo characterInfo = new GlobalDefine.CharacterInfo();
+            characterInfo.id = Int32.Parse(x2.GetAttribute("id"));
+            characterInfo.name = x2.GetAttribute("name");
+            characterInfoList.Add(characterInfo);
+        }
+        playerData.characterInfoList = characterInfoList;
+        PlayerDataManager.instance.Save("playerdata", playerData);
     }
 }

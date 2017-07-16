@@ -51,8 +51,22 @@ namespace GlobalDefine
                                            // public List<Dictionary<int, int>> itemData;
         [SerializeField]
         public int teamData;
+
+        [SerializeField]
+        public List<int> usedId;
+
+        [SerializeField]
+        public List<CharacterInfo> characterInfoList;
         // public List<Character> teamData;            // 隊伍資料
     }
+
+    [Serializable]
+    public class CharacterInfo
+    {
+        public int id;
+        public string name;
+    }
+
 
     [Serializable]
     public class ItemData

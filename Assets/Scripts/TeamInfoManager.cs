@@ -23,6 +23,9 @@ public class TeamInfoManager : MonoBehaviour
     private int[] atkArray = new int[] { 4, 6, 8, 10, 12 };
     private int[] defArray = new int[] { 5, 7, 9, 11, 13 };
     private int[] accessoryArray = new int[] { 14, 15, 16 };
+
+ 
+    List<Character> playerTeam;
     private enum EquipmentType
     {
         ATK = 0,
@@ -52,6 +55,7 @@ public class TeamInfoManager : MonoBehaviour
 
     public void InitTeamData()
     {
+        playerTeam = new List<Character>();
         for (int i = 0; i < teamParent.transform.childCount; i++)
         {
             GameObject go = teamParent.transform.GetChild(i).gameObject;
@@ -66,6 +70,7 @@ public class TeamInfoManager : MonoBehaviour
         {
             string dataPath = "character" + i;
             character = (Character)PlayerDataManager.instance.Load(dataPath, typeof(Character));
+            playerTeam.Add(character);
             GameObject gobj = GameObject.Instantiate(characterItem);
 
             gobj.name = i.ToString();// id
@@ -105,9 +110,12 @@ public class TeamInfoManager : MonoBehaviour
         // string dataPath = "character" + sender.name;
         currentCharacter = int.Parse(sender.name);
         // = (Character)PlayerDataManager.instance.Load(dataPath, typeof(Character));
-
+        Debug.Log("currentCharacter:" + currentCharacter);//1-4
         string dataPath = "character" + currentCharacter;
-        character = (Character)PlayerDataManager.instance.Load(dataPath, typeof(Character));
+
+        // playerTeam[0];
+        character= playerTeam[currentCharacter-1];
+       // character = (Character)PlayerDataManager.instance.Load(dataPath, typeof(Character));
 
         characterIfo.SetActive(true);
         characterIfo.transform.Find("name").GetComponent<Text>().text = character.chrName;
