@@ -47,10 +47,10 @@ public class GameManager : MonoBehaviour {
     private void initItemJson()
     {
         XmlDocument xml = new XmlDocument();
-        XmlReaderSettings set = new XmlReaderSettings();
-        set.IgnoreComments = true;
-        xml.Load(XmlReader.Create((Application.dataPath + "/Items.xml"), set));
-
+        TextAsset textAsset = (TextAsset)Resources.Load("Items", typeof(TextAsset));
+        xml.Load(new System.IO.StringReader(textAsset.text));
+ 
+      
         XmlNodeList xmlNodeList = xml.SelectSingleNode("objects").ChildNodes;
         Debug.Log(xmlNodeList.Count);
 
@@ -75,7 +75,11 @@ public class GameManager : MonoBehaviour {
         //
         List<GlobalDefine.CharacterInfo> characterInfoList = new List<GlobalDefine.CharacterInfo>();
         XmlDocument xml2 = new XmlDocument();
-        xml2.Load(XmlReader.Create((Application.dataPath + "/CharacterName.xml"), set));
+        TextAsset textAsset2 = (TextAsset)Resources.Load("CharacterName", typeof(TextAsset));
+        xml2.Load(new System.IO.StringReader(textAsset2.text));
+       
+
+
         xmlNodeList = xml2.SelectSingleNode("objects").ChildNodes;
         foreach (XmlElement x2 in xmlNodeList)
         {
@@ -85,6 +89,19 @@ public class GameManager : MonoBehaviour {
             characterInfoList.Add(characterInfo);
         }
         playerData.characterInfoList = characterInfoList;
+
+     
+        playerData.money = 15000;
+      
+
+
         PlayerDataManager.instance.Save("playerdata", playerData);
+    }
+
+
+    [ContextMenu("Initial")]
+    void Initial()
+    {
+        PlayerPrefs.DeleteAll();
     }
 }
