@@ -1,0 +1,110 @@
+<objects>
+  <items lv="1" needExp="21"/>
+  <items lv="2" needExp="96"/>
+  <items lv="3" needExp="204"/>
+  <items lv="4" needExp="337"/>
+  <items lv="5" needExp="490"/>
+  <items lv="6" needExp="662"/>
+  <items lv="7" needExp="850"/>
+  <items lv="8" needExp="1054"/>
+  <items lv="9" needExp="1271"/>
+  <items lv="10" needExp="1503"/>
+
+  <items lv="11" needExp="1745"/>
+  <items lv="12" needExp="2001"/>
+  <items lv="13" needExp="2267"/>
+  <items lv="14" needExp="2544"/>
+  <items lv="15" needExp="2832"/>
+  <items lv="16" needExp="3129"/>
+  <items lv="17" needExp="3438"/>
+  <items lv="18" needExp="3754"/>
+  <items lv="19" needExp="4081"/>
+  <items lv="20" needExp="4415"/>
+
+  <items lv="21" needExp="4759"/>
+  <items lv="22" needExp="5112"/>
+  <items lv="23" needExp="5472"/>
+  <items lv="24" needExp="5841"/>
+  <items lv="25" needExp="6218"/>
+  <items lv="26" needExp="6603"/>
+  <items lv="27" needExp="6995"/>
+  <items lv="28" needExp="7394"/>
+  <items lv="29" needExp="7801"/>
+  <items lv="30" needExp="8215"/>
+
+  <items lv="31" needExp="8637"/>
+  <items lv="32" needExp="9065"/>
+  <items lv="33" needExp="9500"/>
+  <items lv="34" needExp="9942"/>
+  <items lv="35" needExp="10390"/>
+  <items lv="36" needExp="10845"/>
+  <items lv="37" needExp="11307"/>
+  <items lv="38" needExp="11774"/>
+  <items lv="39" needExp="12248"/>
+  <items lv="40" needExp="12729"/>
+
+  <items lv="41" needExp="13215"/>
+  <items lv="42" needExp="13708"/>
+  <items lv="43" needExp="14206"/>
+  <items lv="44" needExp="14710"/>
+  <items lv="45" needExp="15220"/>
+  <items lv="46" needExp="15736"/>
+  <items lv="47" needExp="16258"/>
+  <items lv="48" needExp="16785"/>
+  <items lv="49" needExp="17318"/>
+  <items lv="50" needExp="17856"/>
+
+  <items lv="51" needExp="18400"/>
+  <items lv="52" needExp="18950"/>
+  <items lv="53" needExp="19504"/>
+  <items lv="54" needExp="20064"/>
+  <items lv="55" needExp="20629"/>
+  <items lv="56" needExp="21200"/>
+  <items lv="57" needExp="21775"/>
+  <items lv="58" needExp="22356"/>
+  <items lv="59" needExp="22941"/>
+  <items lv="60" needExp="23532"/>
+
+  <items lv="61" needExp="24128"/>
+  <items lv="62" needExp="24729"/>
+  <items lv="63" needExp="25334"/>
+  <items lv="64" needExp="25945"/>
+  <items lv="65" needExp="26560"/>
+  <items lv="66" needExp="27180"/>
+  <items lv="67" needExp="27805"/>
+  <items lv="68" needExp="28434"/>
+  <items lv="69" needExp="29068"/>
+  <items lv="70" needExp="29707"/>
+
+  <items lv="71" needExp="30351"/>
+  <items lv="72" needExp="30999"/>
+  <items lv="73" needExp="31651"/>
+  <items lv="74" needExp="32308"/>
+  <items lv="75" needExp="32970"/>
+  <items lv="76" needExp="33636"/>
+  <items lv="77" needExp="34307"/>
+  <items lv="78" needExp="34981"/>
+  <items lv="79" needExp="35661"/>
+  <items lv="80" needExp="36344"/>
+
+  <items lv="81" needExp="37032"/>
+  <items lv="82" needExp="37724"/>
+  <items lv="83" needExp="38421"/>
+  <items lv="84" needExp="39121"/>
+  <items lv="85" needExp="39826"/>
+  <items lv="86" needExp="40535"/>
+  <items lv="87" needExp="41248"/>
+  <items lv="88" needExp="41966"/>
+  <items lv="89" needExp="42687"/>
+  <items lv="90" needExp="43413"/>
+
+  <items lv="91" needExp="44142"/>
+  <items lv="92" needExp="44876"/>
+  <items lv="93" needExp="45614"/>
+  <items lv="94" needExp="46355"/>
+  <items lv="95" needExp="47101"/>
+  <items lv="96" needExp="47851"/>
+  <items lv="97" needExp="48604"/>
+  <items lv="98" needExp="49362"/>
+ 
+</objects>
