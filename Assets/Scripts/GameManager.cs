@@ -90,11 +90,23 @@ public class GameManager : MonoBehaviour {
         }
         playerData.characterInfoList = characterInfoList;
 
-     
+     //
         playerData.money = 15000;
-      
-
-
+        //
+        List<ExpData> expDataList = new List<ExpData>();
+        XmlDocument xml3 = new XmlDocument();
+        TextAsset textAsset3 = (TextAsset)Resources.Load("Exp", typeof(TextAsset));
+        xml3.Load(new System.IO.StringReader(textAsset3.text));
+     
+        xmlNodeList = xml3.SelectSingleNode("objects").ChildNodes;
+        foreach (XmlElement x3 in xmlNodeList)
+        {
+            ExpData expItem = new ExpData();
+            expItem.lv = Int32.Parse(x3.GetAttribute("lv"));
+            expItem.needExp = Int32.Parse(x3.GetAttribute("needExp"));
+            expDataList.Add(expItem);
+        }
+        playerData.expDataList = expDataList;
         PlayerDataManager.instance.Save("playerdata", playerData);
     }
 

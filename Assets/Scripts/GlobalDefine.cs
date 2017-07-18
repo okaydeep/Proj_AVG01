@@ -50,6 +50,9 @@ namespace GlobalDefine
         public List<ItemData> ownItemData; // 物品資料, 第一個參數是物品id, 第二個是數量
                                            // public List<Dictionary<int, int>> itemData;
         [SerializeField]
+        public List<ExpData> expDataList;
+
+        [SerializeField]
         public int teamData;
 
         [SerializeField]
@@ -65,6 +68,13 @@ namespace GlobalDefine
     {
         public int id;
         public string name;
+    }
+
+    [Serializable]
+    public class ExpData
+    {
+        public int lv;
+        public int needExp;
     }
 
 

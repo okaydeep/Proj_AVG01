@@ -451,6 +451,10 @@ public class MarketManager : MonoBehaviour
         character.baseVarHP = character.baseFixHP;
         character.baseAtk = UnityEngine.Random.Range(10, 16);
         character.baseDef = UnityEngine.Random.Range(10, 16);
+        character.currentExp = 0;
+
+        ExpData expItem= pd.expDataList[character.level - 1];
+        character.currentMaxExp = expItem.needExp;
 
         int characterId = UnityEngine.Random.Range(1, pd.characterInfoList.Count);
 

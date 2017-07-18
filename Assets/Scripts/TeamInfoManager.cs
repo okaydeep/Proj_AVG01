@@ -101,6 +101,7 @@ public class TeamInfoManager : MonoBehaviour
         characterIfo.transform.Find("hpContent").GetComponent<Text>().text = character.baseVarHP.ToString() + "/" + (character.baseFixHP + character.equipHP).ToString();
         characterIfo.transform.Find("atkContent").GetComponent<Text>().text = (character.baseAtk + character.equipAtk).ToString();
         characterIfo.transform.Find("defContent").GetComponent<Text>().text = (character.baseDef + character.equipDef).ToString();
+        characterIfo.transform.Find("expContent").GetComponent<Text>().text = character.currentExp.ToString() + "/" + character.currentMaxExp.ToString();
     }
 
 
@@ -200,6 +201,7 @@ public class TeamInfoManager : MonoBehaviour
 
     public void Cancel(GameObject obj)
     {
+        Debug.Log("obj:" + obj.name);
         switch (obj.name)
         {
             case "Scroll View":
@@ -427,5 +429,21 @@ public class TeamInfoManager : MonoBehaviour
     }
 
 
+    //
+    public void ObtainExp(int totalExp)
+    {
+       int characterCount=playerTeam.Count;
+        //獲得的總經驗 均分給所有傭兵
+       int  exp=totalExp / characterCount;
+
+        //
+        for(int i=0;i< characterCount;i++)
+        {
+            Character character=playerTeam[i];
+            //查詢目前等級
+
+        }
+
+    }
 
 }
