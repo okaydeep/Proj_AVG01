@@ -24,7 +24,7 @@ public class TeamInfoManager : MonoBehaviour
     private int[] defArray = new int[] { 5, 7, 9, 11, 13 };
     private int[] accessoryArray = new int[] { 14, 15, 16 };
 
- 
+
     List<Character> playerTeam;
     private enum EquipmentType
     {
@@ -77,7 +77,7 @@ public class TeamInfoManager : MonoBehaviour
             gobj.transform.SetParent(teamParent);
             gobj.transform.localScale = teamParent.transform.localScale;
             Button btn = gobj.GetComponentInChildren<Button>();
-            btn.onClick.AddListener(delegate()
+            btn.onClick.AddListener(delegate ()
             {
                 this.OnCharacterInformation(gobj);
             });
@@ -96,12 +96,19 @@ public class TeamInfoManager : MonoBehaviour
         child.Find("hpContent").GetComponent<Text>().text = character.baseVarHP.ToString() + "/" + (character.baseFixHP + character.equipHP).ToString();
         child.Find("atkContent").GetComponent<Text>().text = (character.baseAtk + character.equipAtk).ToString();
         child.Find("defContent").GetComponent<Text>().text = (character.baseDef + character.equipDef).ToString();
+        updateCharacterIfo();
+
+    }
+
+    private void updateCharacterIfo()
+    {
         characterIfo.transform.Find("name").GetComponent<Text>().text = character.chrName;
         characterIfo.transform.Find("lvContent").GetComponent<Text>().text = character.level.ToString();
         characterIfo.transform.Find("hpContent").GetComponent<Text>().text = character.baseVarHP.ToString() + "/" + (character.baseFixHP + character.equipHP).ToString();
         characterIfo.transform.Find("atkContent").GetComponent<Text>().text = (character.baseAtk + character.equipAtk).ToString();
         characterIfo.transform.Find("defContent").GetComponent<Text>().text = (character.baseDef + character.equipDef).ToString();
-        characterIfo.transform.Find("expContent").GetComponent<Text>().text = character.currentExp.ToString() + "/" + character.currentMaxExp.ToString();
+       characterIfo.transform.Find("expContent").GetComponent<Text>().text = character.currentExp.ToString() + "/" + character.currentMaxExp.ToString();
+
     }
 
 
@@ -115,8 +122,8 @@ public class TeamInfoManager : MonoBehaviour
         string dataPath = "character" + currentCharacter;
 
         // playerTeam[0];
-        character= playerTeam[currentCharacter-1];
-       // character = (Character)PlayerDataManager.instance.Load(dataPath, typeof(Character));
+        character = playerTeam[currentCharacter - 1];
+        // character = (Character)PlayerDataManager.instance.Load(dataPath, typeof(Character));
 
         characterIfo.SetActive(true);
         characterIfo.transform.Find("name").GetComponent<Text>().text = character.chrName;
@@ -291,10 +298,49 @@ public class TeamInfoManager : MonoBehaviour
 
             //目前裝備的裝備也會顯示 
             Button btn = gobj.GetComponentInChildren<Button>();
-            btn.onClick.AddListener(delegate()
+            btn.onClick.AddListener(delegate ()
             {
                 this.OnEquipment(gobj, itemData);
             });
+
+            btn.transform.Find("title").GetComponent<Text>().text = itemData.name;
+            //依ID顯示加成文字
+            string t = "";
+            switch (id)
+            {
+                case 1://補HP
+                case 2:
+                case 3:
+                    t = "回復HP";
+                    break;
+                case 4://武
+                case 6:
+                case 8:
+                case 10:
+                case 12:
+                    t = "ATK+";
+                    break;
+                case 5://防
+                case 7:
+                case 9:
+                case 11:
+                case 13:
+                    t = "DEF+";
+                    break;
+                case 14://HP
+                case 15:
+                case 16:
+                    t = "HP+";
+                    break;
+            }
+
+
+            btn.transform.Find("content").GetComponent<Text>().text = t + itemData.attr.ToString();
+
+
+
+
+
         }
     }
 
@@ -345,7 +391,7 @@ public class TeamInfoManager : MonoBehaviour
                         oldItemData.equipmentCount -= 1;
                         ownItemDataList[character.item_atk - 1] = oldItemData;
                         //減掉原本裝備能力值
-                        character.equipAtk=0;
+                        character.equipAtk = 0;
 
                     }
 
@@ -409,7 +455,7 @@ public class TeamInfoManager : MonoBehaviour
             //遊戲紀錄該物品 已裝備數量加1
             currentItemData.equipmentCount += 1;
             ownItemDataList[id - 1] = currentItemData;
-          
+
 
 
             // Debug.Log("Count:" + ownItemDataList.Count);
@@ -419,9 +465,9 @@ public class TeamInfoManager : MonoBehaviour
             PlayerDataManager.instance.Save(dataPath, character);
         }
         Debug.Log("currentCharacter:" + currentCharacter.ToString());
-      
-        Transform curCharacter = teamParent.GetChild(currentCharacter-1).GetComponentInChildren<Button>().transform;
-       
+
+        Transform curCharacter = teamParent.GetChild(currentCharacter - 1).GetComponentInChildren<Button>().transform;
+
         //刷新UI
         updateTeamInfo(curCharacter);
         equipmentDialog.SetActive(false);
@@ -430,20 +476,72 @@ public class TeamInfoManager : MonoBehaviour
 
 
     //
+
+    [ContextMenu("addExp")]
+    void addExp()
+    {
+        ObtainExp(300);
+    }
     public void ObtainExp(int totalExp)
     {
-       int characterCount=playerTeam.Count;
+        int characterCount = playerTeam.Count;
         //獲得的總經驗 均分給所有傭兵
-       int  exp=totalExp / characterCount;
+        int exp = totalExp / characterCount;
 
         //
-        for(int i=0;i< characterCount;i++)
+        for (int i = 0; i < characterCount; i++)
         {
-            Character character=playerTeam[i];
+            Character character = playerTeam[i];
             //查詢目前等級
+            int curLevel = character.level;
+            //查詢目前經驗
+            int curExp = character.currentExp;
+            //查詢升級所需總經驗
+            int curMaxExp = character.currentMaxExp;
+            //升級所需經驗
+            int needExp = curMaxExp - curExp;
+            string dataPath = "character" +( i + 1);
 
+            checkExp(dataPath, character, exp, needExp);
         }
 
     }
+
+    private void checkExp(string dataPath, Character character, int exp, int needExp)
+    {
+        if (exp > needExp)//經驗超過所需經驗
+        {
+            int curLevel = character.level;
+            curLevel += 1;
+            //升級加一次能力值 HP15-20 atk2-5 def
+            character.baseFixHP += UnityEngine.Random.Range(15, 21);
+            character.baseAtk += UnityEngine.Random.Range(2, 6);
+            character.baseDef += UnityEngine.Random.Range(2, 6);
+    
+            int lastExp = exp - needExp;//剩下的經驗
+            Debug.Log("curLevel:" + curLevel);
+            //找尋下一級所需經驗
+            int lv = playerData.expDataList[curLevel - 1].lv;
+            Debug.Log("lv:" + lv);
+            needExp = playerData.expDataList[curLevel - 1].needExp;
+            Debug.Log("needExp:" + needExp);
+            character.level = curLevel;
+
+            checkExp(dataPath, character, lastExp, needExp);
+        }
+        else
+        {//經驗 小於 所需經驗 直接設定
+            character.currentExp = exp;
+            character.currentMaxExp = needExp;
+            updateCharacterIfo();
+            characterIfo.transform.Find("expContent").GetComponent<Text>().text = exp.ToString() + "/" + needExp.ToString();
+            //存檔
+             PlayerDataManager.instance.Save(dataPath, character);
+            return;
+        }
+    }
+
+
+
 
 }
