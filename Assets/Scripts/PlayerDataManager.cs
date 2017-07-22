@@ -51,11 +51,17 @@ public class PlayerDataManager
     public void CreateFile(string filePath,string content)
     {
         filePath = DataPath() + filePath;
-        Debug.Log("filePath:" + filePath);
+//Debug.Log("filePath:" + filePath);
         StreamWriter streamWriter = File.CreateText(filePath);
-        Debug.Log("content:" + content);
+  //      Debug.Log("content:" + content);
         streamWriter.Write(content);
         streamWriter.Close();
+    }
+
+    public void DeleteFile(string filePath)
+    {
+        filePath = DataPath() + filePath;
+        File.Delete(filePath);
     }
 
     private string DataPath()
@@ -66,7 +72,7 @@ public class PlayerDataManager
     public void Save(string filePath, object obj) {
         string savePath = DataPath() + "/" + filePath;
         string saveString = SerializeObject(obj);
-        Debug.Log("saveString:" + saveString);
+    //    Debug.Log("saveString:" + saveString);
         CreateFile(filePath, saveString);
     }
 
