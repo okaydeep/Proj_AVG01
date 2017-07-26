@@ -16,7 +16,6 @@ public class CanvasManager : MonoBehaviour {
 	 * 6.商店
 	 */
 	public GameObject[] CanvasObjs;
-    public GameObject GeneralCanvasObj;
 
     private int showingCanvasIdx;
 
@@ -68,11 +67,11 @@ public class CanvasManager : MonoBehaviour {
             canvas == GCanvas.Setting ||
             canvas == GCanvas.TeamInfo)
         {
-            GeneralCanvasObj.SetActive(true);
+			GeneralUIManager.instance.ShowBackButton();
         }
         else
         {
-            GeneralCanvasObj.SetActive(false);
+			GeneralUIManager.instance.HideBackButton();
         }
     }
 
@@ -93,7 +92,5 @@ public class CanvasManager : MonoBehaviour {
                 }
             }
         }
-
-        GeneralCanvasObj.SetActive(false);
     }
 }

@@ -60,6 +60,12 @@ public class NormalStageManager : MonoBehaviour {
 
 	public void StartTravel()
 	{
+		PlayerData playerData = (PlayerData)PlayerDataManager.instance.Load("playerdata", typeof(PlayerData));
+		if (playerData.teamData <= 0) {
+			GeneralUIManager.instance.ShowMessage("沒有可探索的成員");
+			return;
+		}
+
         BattleHandle.instance.autoUseItem = useItemToggle.isOn;
         BattleHandle.instance.targetFloor = targetFloor;
         BattleHandle.instance.BattleStart();
