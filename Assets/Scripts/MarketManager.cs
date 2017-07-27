@@ -268,6 +268,7 @@ public class MarketManager : MonoBehaviour
 
         if (num > count)
         {
+            GeneralUIManager.instance.ShowMessage("沒那多物品:");
             Debug.Log("沒那多物品:" + count);
             return;
         }
@@ -380,6 +381,7 @@ public class MarketManager : MonoBehaviour
         ownTeamMember = pd.teamData;
         if (pd.teamData == 4)
         {
+            GeneralUIManager.instance.ShowMessage("傭兵滿了");
             Debug.Log("傭兵滿了");
             return;
 
@@ -439,6 +441,7 @@ public class MarketManager : MonoBehaviour
       //  Debug.Log("ownCount:" + ownCount);
         if (ownCount > 4)
         {
+            GeneralUIManager.instance.ShowMessage("傭兵滿了");
             Debug.Log("傭兵滿了");
             return;
         }
@@ -551,6 +554,7 @@ public class MarketManager : MonoBehaviour
 
         if (price > ownMoney)
         {
+            GeneralUIManager.instance.ShowMessage("餘額不足");
             Debug.Log("餘額不足");
             return false;
         }
