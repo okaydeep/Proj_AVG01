@@ -7,6 +7,8 @@ public class BattleHistoryManager : MonoBehaviour {
 
     public static BattleHistoryManager instance;
 
+    public Text updateLeftTimeText;
+    public Text updateCountText;
     public Text msgPrefab;
     public Transform contentRoot;
 
@@ -30,16 +32,19 @@ public class BattleHistoryManager : MonoBehaviour {
     }
 
     void OnEnable () {
+//        if (BattleHandle.instance != null)
+//        {
+//            BattleHandle.instance.StartCalculateBattleResult(() => {
+//                string[] tmpList = BattleHandle.instance.LoadHistory();
+//                for (int i=0; i<tmpList.Length; i++)
+//                {
+//                    AddMsgToList(tmpList[i]);
+//                }
+//            });
+//        }
+
         if (BattleHandle.instance != null)
-        {
-            BattleHandle.instance.StartCalculateBattleResult(() => {
-                string[] tmpList = BattleHandle.instance.LoadHistory();
-                for (int i=0; i<tmpList.Length; i++)
-                {
-                    AddMsgToList(tmpList[i]);
-                }
-            });
-        }
+            BattleHandle.instance.BattleStart();
     }
 
     public void AddMsgToList(string msg)

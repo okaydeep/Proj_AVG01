@@ -19,7 +19,7 @@ namespace GlobalDefine
 
     public class GameSetting
     {
-		public const float BATTLE_ROUND_TIME = 2f;		// 戰鬥一回合所需花費的時間(秒)
+		public const float BATTLE_ROUND_TIME = 10f;		// 戰鬥一回合所需花費的時間(秒)
 
 		public const int NORMALSTAGE_MAX_FLOOR = 5000;	// 一般關卡最高樓層
 
@@ -31,7 +31,7 @@ namespace GlobalDefine
 
     public class GeneralFunctions
     {
-        public static long GetNotTimestamp()
+        public static long GetNowTimestamp()
         {
             return (long)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
         }
@@ -107,7 +107,11 @@ namespace GlobalDefine
         public int equipAtk;     // 裝備攻擊
         [SerializeField]
         public int equipDef;     // 裝備防禦
- 
+
+        public int currentHP;
+        public int currentAtk;
+        public int currentDef;
+
         /*
         public CharBase()
         {
@@ -167,7 +171,6 @@ namespace GlobalDefine
         // TODO
         public void UpdateBaseStatus()
         {
-
             baseFixHP = level * 50;
             baseAtk = level * 20;
             baseDef = level * 10;
