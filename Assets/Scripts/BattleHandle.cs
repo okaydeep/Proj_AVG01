@@ -80,8 +80,9 @@ public class BattleHandle : MonoBehaviour
     int currentFloor;               // 目前樓層
     long beginUpdateTimestamp;      // 開始更新戰鬥結果的時間戳記
     long lastUpdateTimestamp;       // 上一次更新戰鬥結果的時間戳記
-    float nextRoundLeftTime;        // 下次更新的剩餘時間
-    float resultCalculatingTime;    // 計算結果花費的讀取時間
+    public int updateCount;         // 已更新次數
+    public int nextRoundLeftTime;   // 下次更新的剩餘時間
+    int resultCalculatingTime;      // 計算結果花費的讀取時間
 
     List<CharBase> playerTeam;
     List<CharBase> enemyTeam;
@@ -109,17 +110,14 @@ public class BattleHandle : MonoBehaviour
 
     void OnApplicationPause(bool pauseStatus)
     {
-        Debug.Log(pauseStatus);
+        //Debug.Log(pauseStatus);
     }
 
     // 戰鬥開始(按下探索按鈕)
     public void BattleStart()
     {
         // 如果有開始戰鬥時間的key, 則擋下
-        if (PlayerPrefs.HasKey(GameSetting.START_BATTLE_TIME_KEY) == true)
-            return;
-
-        if (startCounting == true)
+        if (PlayerPrefs.HasKey(GameSetting.START_BATTLE_TIME_KEY) == true || startCounting == true)
             return;
 
         startCounting = true;
@@ -129,9 +127,9 @@ public class BattleHandle : MonoBehaviour
         if (File.Exists(GameSetting.BATTLE_HISTORY_FILEPATH))
             File.WriteAllText(GameSetting.BATTLE_HISTORY_FILEPATH, "");
         
-//      currentFloor = 1;
-        UpdateBattleStartTimestamp();
-        int updateCount = GetUpdateCount();
+        currentFloor = 1;
+        SetBattleStartTSAndSave();
+        updateCount = GetUpdateCount();
         BattleHistoryManager.instance.updateCountText.text = updateCount.ToString() + " 次";
         UpdateTimestamp();
         SetLeftTimeDisplay(GameSetting.BATTLE_ROUND_TIME);
@@ -146,9 +144,10 @@ public class BattleHandle : MonoBehaviour
         if (PlayerPrefs.HasKey(GameSetting.START_BATTLE_TIME_KEY) == true)
         {
             beginUpdateTimestamp = long.Parse(PlayerPrefs.GetString(GameSetting.START_BATTLE_TIME_KEY));
-            int updateCount = GetUpdateCount();
-            UpdateTimestamp(beginUpdateTimestamp + (long)((int)GameSetting.BATTLE_ROUND_TIME * updateCount));
-            SetLeftTimeDisplay((float)(GeneralFunctions.GetNowTimestamp() - lastUpdateTimestamp));
+            Debug.Log(GeneralFunctions.GetNowTimestamp() - beginUpdateTimestamp);
+            updateCount = GetUpdateCount();
+            UpdateTimestamp(beginUpdateTimestamp + GameSetting.BATTLE_ROUND_TIME * updateCount);
+            SetLeftTimeDisplay((int)(GeneralFunctions.GetNowTimestamp() - lastUpdateTimestamp));
         }
 
         BattleCountDown();
@@ -165,16 +164,16 @@ public class BattleHandle : MonoBehaviour
         yield return new WaitForSeconds(1f);
 
         if (nextRoundLeftTime > 0)
-            UpdateLeftTimeDisplay(-1.0f);
+            UpdateLeftTimeDisplay(-1);
 
-        if (nextRoundLeftTime <= 0f)
+        if (nextRoundLeftTime <= 0)
         {
             Debug.Log(GeneralFunctions.GetNowTimestamp() - lastUpdateTimestamp);
 
-            if ((float)(GeneralFunctions.GetNowTimestamp() - lastUpdateTimestamp) >= GameSetting.BATTLE_ROUND_TIME)
+            if (GeneralFunctions.GetNowTimestamp() - lastUpdateTimestamp >= GameSetting.BATTLE_ROUND_TIME)
             {
                 // 更新戰鬥
-                int updateCount = GetUpdateCount();
+                updateCount = GetUpdateCount();
                 BattleHistoryManager.instance.updateCountText.text = updateCount.ToString() + " 次";
                 UpdateTimestamp(GeneralFunctions.GetNowTimestamp());
                 SetLeftTimeDisplay(GameSetting.BATTLE_ROUND_TIME);
@@ -194,11 +193,11 @@ public class BattleHandle : MonoBehaviour
         while (resultCalculating)
         {
             yield return new WaitForSeconds(1f);
-            resultCalculatingTime += 1f;
+            resultCalculatingTime += 1;
         }
     }
 
-    void UpdateBattleStartTimestamp()
+    void SetBattleStartTSAndSave()
     {
         beginUpdateTimestamp = GeneralFunctions.GetNowTimestamp();
         PlayerPrefs.SetString(GameSetting.START_BATTLE_TIME_KEY, beginUpdateTimestamp.ToString());
@@ -214,7 +213,7 @@ public class BattleHandle : MonoBehaviour
             lastUpdateTimestamp = newTS;
     }
 
-    void SetLeftTimeDisplay(float time)
+    void SetLeftTimeDisplay(int time)
     {
         // 更新剩餘時間
         nextRoundLeftTime = time;
@@ -223,7 +222,7 @@ public class BattleHandle : MonoBehaviour
         BattleHistoryManager.instance.updateLeftTimeText.text = nextRoundLeftTime + " 秒";
     }
 
-    void UpdateLeftTimeDisplay(float time)
+    void UpdateLeftTimeDisplay(int time)
     {
         // 更新剩餘時間
         nextRoundLeftTime += time;
@@ -234,7 +233,7 @@ public class BattleHandle : MonoBehaviour
 
     int GetUpdateCount()
     {
-        return Mathf.FloorToInt((float)(GeneralFunctions.GetNowTimestamp() - beginUpdateTimestamp) / GameSetting.BATTLE_ROUND_TIME);
+        return Mathf.FloorToInt((float)(GeneralFunctions.GetNowTimestamp() - beginUpdateTimestamp) / (float)GameSetting.BATTLE_ROUND_TIME);
     }
 
     float GetResultCalculatingTime()

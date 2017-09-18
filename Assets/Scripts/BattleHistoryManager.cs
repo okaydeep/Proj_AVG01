@@ -44,7 +44,11 @@ public class BattleHistoryManager : MonoBehaviour {
 //        }
 
         if (BattleHandle.instance != null)
+        {
             BattleHandle.instance.BattleStart();
+            updateLeftTimeText.text = BattleHandle.instance.nextRoundLeftTime + " 秒";
+            updateCountText.text = BattleHandle.instance.updateCount.ToString() + " 次";
+        }
     }
 
     public void AddMsgToList(string msg)
