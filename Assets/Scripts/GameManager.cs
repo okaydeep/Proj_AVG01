@@ -12,13 +12,18 @@ public class GameManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-    
-	}
+        Invoke("LoadAD", 5.0f);
+    }
 	
 	// Update is called once per frame
 	void Update () {
 	
 	}
+
+    private void LoadAD()
+    {
+        AdApi.instance.RequestBanner();
+    }
 
 
     [ContextMenu("Initial")]

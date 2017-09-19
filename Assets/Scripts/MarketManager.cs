@@ -367,6 +367,7 @@ public class MarketManager : MonoBehaviour
 
     public void ShopStore()
     {
+        AdApi.instance.RequestRewardBasedVideo();
         currentPage = (int)Market_Page.ShopStore;
         for (int i = 0; i < MarketObjs.Length; i++)
             MarketObjs[i].SetActive(false);
@@ -375,7 +376,7 @@ public class MarketManager : MonoBehaviour
 
     public void Taven()
     {
-        
+        AdApi.instance.RequestInterstitial();
         PlayerData pd = (PlayerData)PlayerDataManager.instance.Load("playerdata", typeof(PlayerData));
 
         ownTeamMember = pd.teamData;
