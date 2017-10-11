@@ -21,6 +21,10 @@ public class GeneralUIManager : MonoBehaviour {
 	private UnityAction leftBtnAct;
 	private UnityAction rightBtnAct;
 
+	private bool loadingMaskShowing;
+	private float waitLoadingTime;
+	private float elapsedWaitTime;
+
     void Awake()
     {
         if (instance == null)
@@ -30,7 +34,9 @@ public class GeneralUIManager : MonoBehaviour {
         else if (instance != this)
         {
             Destroy(gameObject);
-        }    
+        }
+
+		waitLoadingTime = 10f;
     }
 
     // Use this for initialization
@@ -42,7 +48,13 @@ public class GeneralUIManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
+		if (loadingMaskShowing) {
+			elapsedWaitTime += Time.deltaTime;
+
+			if (elapsedWaitTime >= waitLoadingTime) {
+				CloseLoadingMask ();
+			}
+		}
 	}
 
     public void ShowMoneyInfo(bool bol)
@@ -121,10 +133,13 @@ public class GeneralUIManager : MonoBehaviour {
 	public void ShowLoadingMask()
 	{
 		LoadingMask.SetActive (true);
+		elapsedWaitTime = 0f;
+		loadingMaskShowing = true;
 	}
 
 	public void CloseLoadingMask()
 	{
+		loadingMaskShowing = false;
 		LoadingMask.SetActive (false);
 	}
 
