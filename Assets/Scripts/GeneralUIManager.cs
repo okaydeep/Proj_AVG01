@@ -11,10 +11,12 @@ public class GeneralUIManager : MonoBehaviour {
     public GameObject BackButton;
     public GameObject MoneyInfo;
     public GameObject DialogUI;
+	public GameObject LoadingMask;
     public Text DialogText;
 	public Button DialogOkButton;
     public Button DialogLeftButton;
     public Button DialogRightButton;
+	public RawImage loadingIconImg;
 
 	private UnityAction leftBtnAct;
 	private UnityAction rightBtnAct;
@@ -114,6 +116,16 @@ public class GeneralUIManager : MonoBehaviour {
             default:
                 break;
         }
+	}
+
+	public void ShowLoadingMask()
+	{
+		LoadingMask.SetActive (true);
+	}
+
+	public void CloseLoadingMask()
+	{
+		LoadingMask.SetActive (false);
 	}
 
 	void CloseDialogEvt()
