@@ -105,7 +105,61 @@ public class BattleHandle : MonoBehaviour
         playerTeam = new List<CharBase>();
         enemyTeam = new List<CharBase>();
 
-        UpdateTimeDisp();
+        // 計算離線的時間及更新玩家資訊
+        CalculateTimeDispAndUpdate();
+    }
+
+    // 計算離線的時間及更新玩家資訊
+    void CalculateTimeDispAndUpdate()
+    {
+        if (PlayerPrefs.HasKey(GameSetting.START_BATTLE_TIME_KEY) == true)
+        {
+            // 狀態初始
+            isBattling = true;
+            isBattleFinished = false;
+
+            // 探索資料初始
+            currentFloor = 1;
+            targetFloor = 100;
+            SetPlayerTeamData();
+            SetEnemyTeamByFloor(currentFloor);
+
+            // 更新開始戰鬥時間戳記
+            startBattleTS = long.Parse(PlayerPrefs.GetString(GameSetting.START_BATTLE_TIME_KEY));
+            lastUpdateTS = startBattleTS;
+
+            // 取得已經過時間內需要更新的次數
+            updateCount = GetUpdateCountFromStart();
+            BattleHistoryManager.instance.updateCountText.text = updateCount.ToString() + " 次";
+            Debug.Log("須更新次數: " + updateCount.ToString());
+
+            // 根據須更新次數計算更新資料
+            StartCoroutine( CalculatePastBattleResult() );
+        }
+    }
+
+    // 根據須更新次數計算更新資料
+    IEnumerator CalculatePastBattleResult()
+    {
+        for (int i = 0; i < updateCount; i++)
+        {
+            DoBattle ();
+            yield return null;
+            if (isBattleFinished == true)
+                yield break;
+        }
+
+        if (isBattleFinished == false)
+        {
+            lastUpdateTS += (long)updateCount * GameSetting.BATTLE_ROUND_TIME;
+            int leftTime = (int)(GeneralFunctions.GetNowTimestamp() - lastUpdateTS);
+            SetLeftTimeDisplay(leftTime);
+            Debug.Log("下次更新剩餘時間: " + leftTime.ToString());
+
+            BattleCountDown();
+        }
+        else
+            Debug.Log("Battle finished");
     }
 
     void OnApplicationPause(bool pauseStatus)
@@ -120,13 +174,16 @@ public class BattleHandle : MonoBehaviour
 		if (PlayerPrefs.HasKey(GameSetting.START_BATTLE_TIME_KEY) == true || isBattling == true)
             return;
 
+        // 狀態初始
 		isBattling = true;
 		isBattleFinished = false;
 
         if (File.Exists(GameSetting.BATTLE_HISTORY_FILEPATH))
             File.WriteAllText(GameSetting.BATTLE_HISTORY_FILEPATH, "");
-        
+
+        // 探索資料初始
         currentFloor = 1;
+        targetFloor = 100;
 	    SetPlayerTeamData();
       	SetEnemyTeamByFloor(currentFloor);
 
@@ -141,69 +198,43 @@ public class BattleHandle : MonoBehaviour
 		// 更新剩餘時間顯示
 		SetLeftTimeDisplay(GameSetting.BATTLE_ROUND_TIME);
 
+        // 戰鬥倒數
         BattleCountDown();
     }
 
-    void UpdateTimeDisp()
-    {
-        if (PlayerPrefs.HasKey(GameSetting.START_BATTLE_TIME_KEY) == true)
-        {
-			isBattleFinished = false;
-
-			startBattleTS = long.Parse(PlayerPrefs.GetString(GameSetting.START_BATTLE_TIME_KEY));
-			lastUpdateTS = startBattleTS;
-
-			updateCount = GetUpdateCountFromStart();
-			BattleHistoryManager.instance.updateCountText.text = updateCount.ToString() + " 次";
-			Debug.Log("已更新次數: " + updateCount.ToString());
-
-//			float tmpTime = Time.time;
-			StartCoroutine( CalculatePastBattleResult() );
-//			resultCalculatingTime = Time.time - tmpTime;
-
-			if (isBattleFinished == false)
-			{
-				lastUpdateTS += (long)updateCount * GameSetting.BATTLE_ROUND_TIME;
-				int leftTime = (int)(GeneralFunctions.GetNowTimestamp() - lastUpdateTS);
-				SetLeftTimeDisplay(leftTime);
-				Debug.Log("下次更新剩餘時間: " + leftTime.ToString());
-
-				BattleCountDown();
-			}
-			else
-				Debug.Log("Battle finished");
-        }
-    }
-
+    // 戰鬥倒數
     void BattleCountDown()
     {
-//        Invoke("UpdateNextRoundLeftTime", 1.0f);
         StartCoroutine(UpdateNextRoundLeftTime());
     }
 
     IEnumerator UpdateNextRoundLeftTime()
     {
         yield return new WaitForSeconds(1f);
+        UpdateLeftTimeDisplay(-1);
 
         if (nextRoundLeftTime > 0)
-			SetLeftTimeDisplay(-1);
-
-		if (nextRoundLeftTime <= 0)
+        {
+            BattleCountDown();
+        }
+        else
 		{
-			Debug.Log(GeneralFunctions.GetNowTimestamp() - lastUpdateTS);
-
+//            Debug.Log(GeneralFunctions.GetNowTimestamp() - lastUpdateTS);
 			if (GeneralFunctions.GetNowTimestamp() - lastUpdateTS >= GameSetting.BATTLE_ROUND_TIME)
 			{
-				// 更新戰鬥
-//                updateCount = GetUpdateCountFromStart();
-//                BattleHistoryManager.instance.updateCountText.text = updateCount.ToString() + " 次";
-//				lastUpdateTS = lastUpdateTS + GameSetting.BATTLE_ROUND_TIME;
+				// 開始戰鬥
 				DoBattle();
-				SetLeftTimeDisplay(GameSetting.BATTLE_ROUND_TIME);
-			}
-		}
 
-		BattleCountDown();
+                if (isBattleFinished == false)
+                {
+                    lastUpdateTS = lastUpdateTS + GameSetting.BATTLE_ROUND_TIME;
+                    SetLeftTimeDisplay(GameSetting.BATTLE_ROUND_TIME);
+                    BattleCountDown();
+                }
+			}
+            else
+                BattleCountDown();
+		}
     }
 
 
@@ -230,7 +261,7 @@ public class BattleHandle : MonoBehaviour
             lastUpdateTS = newTS;
     }
 
-	// 更新剩餘時間顯示
+	// 設定剩餘時間顯示
     void SetLeftTimeDisplay(int time)
     {
         // 更新剩餘時間
@@ -240,22 +271,15 @@ public class BattleHandle : MonoBehaviour
         BattleHistoryManager.instance.updateLeftTimeText.text = nextRoundLeftTime + " 秒";
     }
 
-    float GetResultCalculatingTime()
+    // 更新剩餘時間顯示
+    void UpdateLeftTimeDisplay(int time)
     {
-		isResultCalculating = false;
-        float ret = resultCalculatingTime;
-        resultCalculatingTime = 0;
-        return ret;
-    }
+        // 更新剩餘時間
+        nextRoundLeftTime += time;
 
-	IEnumerator CalculatePastBattleResult()
-	{
-		for (int i = 0; i < updateCount; i++)
-		{
-			DoBattle ();
-			yield return null;
-		}
-	}
+        // 更新顯示
+        BattleHistoryManager.instance.updateLeftTimeText.text = nextRoundLeftTime + " 秒";
+    }
 
     void DoBattle()
     {
@@ -274,6 +298,7 @@ public class BattleHandle : MonoBehaviour
         else
         {
             // 玩家勝利, 樓層突破
+            Debug.Log(currentFloor.ToString() + " floor passed");
             currentFloor++;
 
             if (currentFloor >= targetFloor)
@@ -287,10 +312,7 @@ public class BattleHandle : MonoBehaviour
             }
             else
             {
-				lastUpdateTS = lastUpdateTS + GameSetting.BATTLE_ROUND_TIME;
-				SetLeftTimeDisplay(GameSetting.BATTLE_ROUND_TIME);
 				SetEnemyTeamByFloor(currentFloor);
-				BattleCountDown();
             }
         }
     }
@@ -316,12 +338,7 @@ public class BattleHandle : MonoBehaviour
 			PlayerPrefs.DeleteKey(GameSetting.START_BATTLE_TIME_KEY);
 			PlayerPrefs.Save();
 			// TODO: 更新玩家資訊
-		}
-		else
-		{
-			lastUpdateTS = lastUpdateTS + GameSetting.BATTLE_ROUND_TIME;
-			SetLeftTimeDisplay(GameSetting.BATTLE_ROUND_TIME);
-			BattleCountDown();
+            Debug.Log("Failed at " + currentFloor.ToString() + " floor");
 		}
     }
 
@@ -380,7 +397,7 @@ public class BattleHandle : MonoBehaviour
         {
             Monster mob = new Monster();
             mob.equipHP = floor * 10 + 5;
-            mob.equipAtk = floor * 3 + 2;
+            mob.equipAtk = floor * 8 + 2;
             mob.equipDef = floor * 1 + 1;
             CharBase chb = new CharBase();
             chb.currentHP = mob.equipHP;
