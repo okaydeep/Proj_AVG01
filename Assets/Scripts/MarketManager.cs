@@ -42,12 +42,14 @@ public class MarketManager : MonoBehaviour
 
     void OnGUI()
     {
+        #if TESTMODE
         if (GUI.Button(new Rect(10, 20, 180, 30), "add 1000 Money"))
         {
             addMoney(1000);
             //tet();
 
         };
+        #endif
         /*
         if (GUI.Button(new Rect(300, 20, 180, 30), "xml"))
         {
@@ -79,6 +81,18 @@ public class MarketManager : MonoBehaviour
             Destroy(gameObject);
         }
 
+    }
+
+    public void InitStore()
+    {
+        CloseDialog(ShopList);
+        Cancel();
+
+        for (int i = 0; i < MarketObjs.Length; i++)
+            MarketObjs[i].SetActive(true);
+        ShopStoreObj.SetActive(false);
+
+        currentPage = (int)Market_Page.Main;
     }
 
     public void Purchase()
@@ -347,11 +361,12 @@ public class MarketManager : MonoBehaviour
                 break;
             case (int)Market_Page.ShopStore:
                 // CanvasManager.instance.ShowCanvas(GlobalDefine.GCanvas.Market);
-                for (int i = 0; i < MarketObjs.Length; i++)
-                    MarketObjs[i].SetActive(true);
-                ShopStoreObj.SetActive(false);
-
-                currentPage = (int)Market_Page.Main;
+//                for (int i = 0; i < MarketObjs.Length; i++)
+//                    MarketObjs[i].SetActive(true);
+//                ShopStoreObj.SetActive(false);
+//
+//                currentPage = (int)Market_Page.Main;
+                InitStore();
                 break;
             case (int)Market_Page.Taven:
                 currentPage = (int)Market_Page.Main;

@@ -36,7 +36,7 @@ public class TeamInfoManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        InitTeamData();
+        
     }
 
     // Update is called once per frame
@@ -52,6 +52,12 @@ public class TeamInfoManager : MonoBehaviour
         }
     }
 
+    public void InitTeamInfo()
+    {
+        InitTeamData();
+        Cancel(characterIfo);
+        Cancel(equipmentList);
+    }
 
     public void InitTeamData()
     {
@@ -107,7 +113,7 @@ public class TeamInfoManager : MonoBehaviour
         characterIfo.transform.Find("hpContent").GetComponent<Text>().text = character.baseVarHP.ToString() + "/" + (character.baseFixHP + character.equipHP).ToString();
         characterIfo.transform.Find("atkContent").GetComponent<Text>().text = (character.baseAtk + character.equipAtk).ToString();
         characterIfo.transform.Find("defContent").GetComponent<Text>().text = (character.baseDef + character.equipDef).ToString();
-       characterIfo.transform.Find("expContent").GetComponent<Text>().text = character.currentExp.ToString() + "/" + character.currentMaxExp.ToString();
+        characterIfo.transform.Find("expContent").GetComponent<Text>().text = character.currentExp.ToString() + "/" + character.currentMaxExp.ToString();
 
     }
 

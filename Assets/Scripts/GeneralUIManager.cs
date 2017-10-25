@@ -114,15 +114,10 @@ public class GeneralUIManager : MonoBehaviour {
                 CanvasManager.instance.ShowCanvas(GCanvas.HomeMenu);
                 break;
             case (int)GCanvas.TeamInfo:
-                CanvasManager.instance.ShowCanvas(GCanvas.BattleMenu);
-                break;
             case (int)GCanvas.NormalStage:
-                CanvasManager.instance.ShowCanvas(GCanvas.BattleMenu);
-                break;
             case (int)GCanvas.Market:
-                CanvasManager.instance.ShowCanvas(GCanvas.BattleMenu);
-                break;
             case (int)GCanvas.BattleHistory:
+                ShowMoneyInfo(false);
                 CanvasManager.instance.ShowCanvas(GCanvas.BattleMenu);
                 break;
             default:

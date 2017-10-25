@@ -39,7 +39,8 @@ public class HomeMenuManager : MonoBehaviour
         playerData = (GlobalDefine.PlayerData)PlayerDataManager.instance.Load("playerdata", typeof(GlobalDefine.PlayerData));
 
         //  Debug.Log("HomeMenuManager playerData:"+ playerData.money.ToString());
-        GeneralUIManager.instance.SetMoneyInfo(playerData.money.ToString());
+        if (GeneralUIManager.instance != null)
+            GeneralUIManager.instance.SetMoneyInfo(playerData.money.ToString());
         
 
     }

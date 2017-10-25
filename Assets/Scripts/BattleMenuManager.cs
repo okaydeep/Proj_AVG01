@@ -16,6 +16,7 @@ public class BattleMenuManager : MonoBehaviour {
 	public void ShowTeamInfo()
 	{
 		CanvasManager.instance.ShowCanvas (GlobalDefine.GCanvas.TeamInfo);
+        TeamInfoManager.instance.InitTeamInfo();
 	}
 
 	public void ShowStageMap()
@@ -26,6 +27,7 @@ public class BattleMenuManager : MonoBehaviour {
 	public void ShowMarket()
 	{
 		CanvasManager.instance.ShowCanvas (GlobalDefine.GCanvas.Market);
+        MarketManager.instance.InitStore();
 	}
 
 	public void ShowBattleHistory()

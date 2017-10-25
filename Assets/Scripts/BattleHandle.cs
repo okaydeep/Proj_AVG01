@@ -7,40 +7,81 @@ using UnityEngine;
 using GlobalDefine;
 using System.Text;
 
+// 戰鬥相關計算處理
 public class Battle {
 
-    public static int GetTeamDmg(List<CharBase> team)
+    private static List<int> dmgList;
+
+    public static List<int> GetTeamDmg(List<CharBase> team)
     {
-        int finalAtk = 0;
+//        int finalAtk = 0;
+//
+//        for (int i = 0; i < team.Count; i++)
+//        {
+//            if (team[i].currentHP > 0)
+//                finalAtk += team[i].currentAtk;
+//        }
+//
+//        return finalAtk;
+
+        if (dmgList == null)
+            dmgList = new List<int>();
+
+        dmgList.Clear();
 
         for (int i = 0; i < team.Count; i++)
         {
             if (team[i].currentHP > 0)
-                finalAtk += team[i].currentAtk;
+                dmgList.Add(team[i].currentAtk);
         }
 
-        return finalAtk;
+        return dmgList;
     }
 
-    public static void DoTeamDmg(int dmg, List<CharBase> takenDmgTeam)
+    public static void DoTeamDmg(List<int> dmg, List<CharBase> takenDmgTeam)
     {
-        for (int i = 0; i < takenDmgTeam.Count; i++)
-        {
-            if (dmg <= 0)
-                break;
+//        for (int i = 0; i < takenDmgTeam.Count; i++)
+//        {
+//            if (dmg <= 0)
+//                break;
+//
+//            if (takenDmgTeam[i].currentHP > 0)
+//            {
+//                if (dmg >= takenDmgTeam[i].currentHP)
+//                {
+//                    dmg -= takenDmgTeam[i].currentHP;
+//                    takenDmgTeam[i].currentHP = 0;
+//                }
+//                else
+//                {
+//                    takenDmgTeam[i].currentHP -= dmg;
+//                    break;
+//                }
+//            }
+//        }
 
-            if (takenDmgTeam[i].currentHP > 0)
+        for (int i = 0; i < dmg.Count; i++)
+        {
+            if (dmg[i] <= 0)
+                continue;
+
+            for (int j = 0; j < takenDmgTeam.Count; j++)
             {
-                if (dmg >= takenDmgTeam[i].currentHP)
+                if (takenDmgTeam[j].currentHP <= 0)
+                    continue;
+
+                int fightStatsSum = dmg[i] + takenDmgTeam[j].currentDef;
+                int finalDmg = Mathf.RoundToInt(dmg[i] * ((float)dmg[i] / (float)fightStatsSum));
+
+                if (finalDmg >= takenDmgTeam[j].currentHP)
                 {
-                    dmg -= takenDmgTeam[i].currentHP;
-                    takenDmgTeam[i].currentHP = 0;
+                    takenDmgTeam[j].currentHP = 0;
                 }
                 else
                 {
-                    takenDmgTeam[i].currentHP -= dmg;
-                    break;
+                    takenDmgTeam[j].currentHP -= finalDmg;
                 }
+                break;
             }
         }
     }
@@ -64,6 +105,7 @@ public class Battle {
 
 }
 
+// 戰鬥流程管理
 public class BattleHandle : MonoBehaviour
 {
 
@@ -281,15 +323,16 @@ public class BattleHandle : MonoBehaviour
         BattleHistoryManager.instance.updateLeftTimeText.text = nextRoundLeftTime + " 秒";
     }
 
+    // 開始戰鬥(回合)
     void DoBattle()
     {
         PlayerAttack();
     }
 
+    // 玩家攻擊
 	void PlayerAttack()
     {
-        int dmg = Battle.GetTeamDmg(playerTeam);
-        Battle.DoTeamDmg(dmg, enemyTeam);
+        Battle.DoTeamDmg(Battle.GetTeamDmg(playerTeam), enemyTeam);
 
         if (Battle.AnyTeammateAlive(enemyTeam) == true)
         {
@@ -317,10 +360,10 @@ public class BattleHandle : MonoBehaviour
         }
     }
 
+    // 敵人攻擊
     void EnemyAttack()
     {
-        int dmg = Battle.GetTeamDmg(enemyTeam);
-        Battle.DoTeamDmg(dmg, playerTeam);
+        Battle.DoTeamDmg(Battle.GetTeamDmg(enemyTeam), playerTeam);
 		int leftHP = 0;
 		for (int i = 0; i < playerTeam.Count; i++)
 		{
@@ -349,39 +392,38 @@ public class BattleHandle : MonoBehaviour
             playerTeam.Clear();
         
         // official
-//        PlayerData playerData = (PlayerData)PlayerDataManager.instance.Load("playerdata", typeof(PlayerData));
-//        int teamMemberCount = playerData.teamData;
-//        for (int i = 1; i <= teamMemberCount; i++)
-//        {
-//            string dataPath = "character" + i;
-//            Character character = (Character)PlayerDataManager.instance.Load(dataPath, typeof(Character));
-//            CharBase chb = new CharBase();
-//            chb.currentHP = character.equipHP;
-//            chb.currentAtk = character.equipAtk;
-//            chb.currentDef = character.equipDef;
-//            playerTeam.Add(chb);
-//
-//        }
+        PlayerData playerData = (PlayerData)PlayerDataManager.instance.Load("playerdata", typeof(PlayerData));
+        int teamMemberCount = playerData.teamData;
+        for (int i = 1; i <= teamMemberCount; i++)
+        {
+            string dataPath = "character" + i;
+            Character character = (Character)PlayerDataManager.instance.Load(dataPath, typeof(Character));
+            CharBase chb = new CharBase();
+            chb.currentHP = character.equipHP;
+            chb.currentAtk = character.equipAtk;
+            chb.currentDef = character.equipDef;
+            playerTeam.Add(chb);
+        }
 
         // test
-        Character chr = new Character();
-        chr.chrName = "Henry";
-		chr.currentHP = 300;
-		chr.currentAtk = 6;
-		chr.currentDef = 2;
-        playerTeam.Add(chr);
-        chr = new Character();
-        chr.chrName = "Davis";
-        chr.currentHP = 200;
-		chr.currentAtk = 7;
-		chr.currentDef = 1;
-        playerTeam.Add(chr);
-        chr = new Character();
-        chr.chrName = "Woody";
-		chr.currentHP = 350;
-		chr.currentAtk = 4;
-		chr.currentDef = 4;
-        playerTeam.Add(chr);
+//        Character chr = new Character();
+//        chr.chrName = "Henry";
+//		chr.currentHP = 300;
+//		chr.currentAtk = 6;
+//		chr.currentDef = 2;
+//        playerTeam.Add(chr);
+//        chr = new Character();
+//        chr.chrName = "Davis";
+//        chr.currentHP = 200;
+//		chr.currentAtk = 7;
+//		chr.currentDef = 1;
+//        playerTeam.Add(chr);
+//        chr = new Character();
+//        chr.chrName = "Woody";
+//		chr.currentHP = 350;
+//		chr.currentAtk = 4;
+//		chr.currentDef = 4;
+//        playerTeam.Add(chr);
 
         playerTeam = playerTeam.OrderBy(val => val.currentHP).ToList();
     }
